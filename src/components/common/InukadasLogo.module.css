@@ -18,15 +18,18 @@
 
 /* Size variations for image logo */
 .small .logoImage {
-  height: 80px;
+  height: 120px;
+  width: 90%;
 }
 
 .medium .logoImage {
-  height: 140px;
+  height: 200px;
+  width: 95%;
 }
 
 .large .logoImage {
-  height: 200px;
+  height: 280px;
+  width: 98%;
 }
 
 /* Color variations */
@@ -66,24 +69,29 @@
 /* Responsive design */
 @media (max-width: 768px) {
   .medium .logoImage {
-    height: 120px;
+    height: 160px;
+    width: 92%;
   }
   
   .large .logoImage {
-    height: 160px;
+    height: 220px;
+    width: 95%;
   }
 }
 
 @media (max-width: 480px) {
   .small .logoImage {
-    height: 70px;
+    height: 100px;
+    width: 88%;
   }
   
   .medium .logoImage {
-    height: 100px;
+    height: 140px;
+    width: 90%;
   }
   
   .large .logoImage {
-    height: 140px;
+    height: 180px;
+    width: 92%;
   }
 }
