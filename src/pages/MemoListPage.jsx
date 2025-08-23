@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { MemoProvider, useMemos } from '../contexts/MemoContext';
 import { MemoTimeline } from '../components/memo/MemoTimeline';
 import { MemoInput } from '../components/memo/MemoInput';
+import { EditMemoForm } from '../components/memo/EditMemoForm';
 import SearchBox from '../components/forms/SearchBox/SearchBox';
 import { useAuth } from '../contexts/AuthContext';
 import { useAuthActions } from '../hooks/useAuthActions';
@@ -42,6 +43,7 @@ const MemoListPageContent = () => {
     searchMemos,
     clearSearch,
     deleteMemo,
+    updateMemo,
     refreshMemos
   } = useMemos();
   
@@ -59,6 +61,8 @@ const MemoListPageContent = () => {
   const [currentPlayTime, setCurrentPlayTime] = useState(0);
   const [currentAudioDuration, setCurrentAudioDuration] = useState(0); // 実際の音声時間
   const [searchQuery, setSearchQuery] = useState('');
+  const [editingMemo, setEditingMemo] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
   
   // Audio管理
   const audioRef = useRef(null);
@@ -155,6 +159,33 @@ const MemoListPageContent = () => {
       console.error('Failed to delete memo:', error);
     }
   }, [deleteMemo, currentlyPlaying, handlePauseAudio]);
+
+  // メモ編集
+  const handleEditMemo = useCallback((memoId) => {
+    const memo = memos.find(m => m.id === memoId);
+    if (memo) {
+      setEditingMemo(memo);
+      setShowEditModal(true);
+    }
+  }, [memos]);
+
+  // メモ更新
+  const handleUpdateMemo = useCallback(async (memoId, content) => {
+    try {
+      await updateMemo(memoId, { content, updatedAt: new Date() });
+      setShowEditModal(false);
+      setEditingMemo(null);
+      refreshMemos();
+    } catch (error) {
+      console.error('Failed to update memo:', error);
+    }
+  }, [updateMemo, refreshMemos]);
+
+  // 編集モーダルを閉じる
+  const handleCloseEditModal = useCallback(() => {
+    setShowEditModal(false);
+    setEditingMemo(null);
+  }, []);
 
   // 検索処理
   const handleSearch = useCallback(async (query) => {
@@ -282,6 +313,7 @@ const MemoListPageContent = () => {
               onPlayAudio={handlePlayAudio}
               onPauseAudio={handlePauseAudio}
               onDeleteMemo={handleDeleteMemo}
+              onEditMemo={handleEditMemo}
               onRefresh={refreshMemos}
               useVirtualScroll={false} // 仮想スクロールを無効化
               height={window.innerHeight - 200}
@@ -347,6 +379,58 @@ const MemoListPageContent = () => {
                 onSubmitError={(error) => {
                   console.error('Memo submission error:', error);
                 }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* メモ編集モーダル */}
+      {showEditModal && editingMemo && (
+        <div className={styles.modalOverlay} onClick={handleCloseEditModal}>
+          <div 
+            className={classNames(
+              styles.modalContent,
+              { [styles.modalContentMobile]: isMobile }
+            )}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* モーダルヘッダー */}
+            <div className={classNames(
+              styles.modalHeader,
+              { [styles.modalHeaderMobile]: isMobile }
+            )}>
+              {isMobile && (
+                <button
+                  className={styles.modalCloseButton}
+                  onClick={handleCloseEditModal}
+                  aria-label="閉じる"
+                  type="button"
+                >
+                  ←
+                </button>
+              )}
+              <h2 className={styles.modalTitle}>
+                メモを編集
+              </h2>
+              {!isMobile && (
+                <button
+                  className={styles.modalCloseButton}
+                  onClick={handleCloseEditModal}
+                  aria-label="閉じる"
+                  type="button"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+            
+            {/* メモ編集フォーム */}
+            <div className={styles.modalBody}>
+              <EditMemoForm
+                memo={editingMemo}
+                onSave={handleUpdateMemo}
+                onCancel={handleCloseEditModal}
               />
             </div>
           </div>
