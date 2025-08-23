@@ -3,15 +3,16 @@
 /* カードコンテナ */
 .card {
   max-width: 400px;
-  margin: 32px auto;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  margin: 0 auto;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+  width: 100%;
 }
 
 .cardContent {
-  padding: 32px;
+  padding: 0;
 }
 
 /* ロゴコンテナ */
@@ -348,8 +349,11 @@
 /* レスポンシブ */
 @media (max-width: 768px) {
   .card {
-    margin: 16px;
+    margin: 0;
     max-width: none;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   }
   
   .cardContent {

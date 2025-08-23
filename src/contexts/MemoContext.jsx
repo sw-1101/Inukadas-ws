@@ -20,6 +20,7 @@ import { authService } from '../services/firebase/auth';
 const initialState = {
   memos: [],
   loading: false,
+  refreshing: false,
   error: null,
   hasMore: true,
   isSearching: false,
@@ -34,12 +35,16 @@ const memoReducer = (state, action) => {
     case 'MEMOS_LOADING':
       return { ...state, loading: true, error: null };
     
+    case 'MEMOS_REFRESHING':
+      return { ...state, refreshing: true, error: null };
+    
     case 'MEMOS_LOADED':
       return {
         ...state,
         memos: action.payload.memos,
         hasMore: action.payload.hasMore,
         loading: false,
+        refreshing: false,
         error: null
       };
     
@@ -281,8 +286,41 @@ export const MemoProvider= ({ children }) => {
    * Refresh memos (reload from server)
    */
   const refreshMemos = useCallback(async () => {
+    dispatch({ type: 'MEMOS_REFRESHING' });
     lastDocRef.current = null;
+    
+    // 3秒間スピナー表示（テスト用）
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    
     await loadMemos();
+    
+    // リロード完了後にスムーズなトランジション付きでスクロールを一番上に戻す
+    const smoothScrollToTop = () => {
+      const currentPosition = window.scrollY;
+      const targetPosition = 0;
+      const distance = currentPosition - targetPosition;
+      const duration = 800; // 0.8秒
+      let start = null;
+
+      const step = (timestamp) => {
+        if (!start) start = timestamp;
+        const progress = timestamp - start;
+        const progressPercentage = Math.min(progress / duration, 1);
+        
+        // イージング関数（ease-out）
+        const easeOut = 1 - Math.pow(1 - progressPercentage, 3);
+        
+        window.scrollTo(0, currentPosition - (distance * easeOut));
+        
+        if (progress < duration) {
+          window.requestAnimationFrame(step);
+        }
+      };
+      
+      window.requestAnimationFrame(step);
+    };
+    
+    smoothScrollToTop();
   }, [loadMemos]);
 
   /**

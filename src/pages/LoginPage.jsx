@@ -4,6 +4,7 @@ import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { LoginForm } from '../components/auth'
 import { useAuth } from '../contexts/AuthContext'
 import { useEffect } from 'react'
+import InukadasLogoSvg from '../assets/Inukadas-logo.svg'
 import styles from './LoginPage.module.css'
 
 // カスタムCSS + CSS Modules実装
@@ -39,14 +40,28 @@ const LoginPage= () => {
   return (
     <div className={styles.container}>
       <div className={styles.content}>
-        <LoginForm onSuccess={handleLoginSuccess} />
+        <div className={styles.logoSection}>
+          <div className={styles.logoContainer}>
+            <div className={styles.logoWrapper}>
+              <img 
+                src={InukadasLogoSvg} 
+                alt="Inukadas Logo" 
+                className={styles.logoImage}
+              />
+            </div>
+          </div>
+        </div>
         
-        <div className={styles.registerLinkContainer}>
-          <div className={styles.registerText}>
-            アカウントをお持ちでない方は{' '}
-            <RouterLink to="/register" className={styles.registerLink}>
-              こちらから登録
-            </RouterLink>
+        <div className={styles.formSection}>
+          <LoginForm onSuccess={handleLoginSuccess} showLogo={false} />
+          
+          <div className={styles.registerLinkContainer}>
+            <div className={styles.registerText}>
+              アカウントをお持ちでない方は{' '}
+              <RouterLink to="/register" className={styles.registerLink}>
+                こちらから登録
+              </RouterLink>
+            </div>
           </div>
         </div>
       </div>

@@ -1,0 +1,193 @@
+/* SideMenu コンポーネントスタイル */
+
+/* スライドアウトメニューオーバーレイ */
+.menuOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 200;
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.menuOverlayClosing {
+  animation: fadeOut 0.3s ease-out forwards;
+}
+
+/* スライドアウトメニューパネル */
+.menuPanel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 280px;
+  background: white;
+  z-index: 201;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+.menuPanelClosing {
+  animation: slideOut 0.3s ease-out forwards;
+}
+
+/* メニューヘッダー */
+.menuHeader {
+  padding: 24px 16px;
+  background: linear-gradient(135deg, #7c4dff 0%, #6a11cb 100%);
+  color: white;
+  flex-shrink: 0;
+}
+
+.menuUserInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.menuUserIcon {
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.menuUserDetails {
+  flex: 1;
+  min-width: 0;
+}
+
+.menuUserName {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menuUserEmail {
+  font-size: 12px;
+  opacity: 0.8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* メニューナビゲーション */
+.menuNav {
+  flex: 1;
+  padding: 8px 0;
+  overflow-y: auto;
+}
+
+.menuItem {
+  width: 100%;
+  padding: 16px 20px;
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: background-color 0.2s ease;
+  font-size: 14px;
+  color: #333;
+}
+
+.menuItem:hover {
+  background: rgba(124, 77, 255, 0.08);
+}
+
+.menuItem:active {
+  background: rgba(124, 77, 255, 0.12);
+}
+
+.menuItemIcon {
+  width: 20px;
+  font-size: 16px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* アニメーション */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/* モバイル対応 */
+@media (max-width: 640px) {
+  .menuPanel {
+    width: 260px;
+  }
+  
+  .menuHeader {
+    padding: 20px 16px;
+  }
+  
+  .menuUserIcon {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+  
+  .menuItem {
+    padding: 14px 16px;
+  }
+}
+
+/* ダークモード対応 */
+[data-theme="dark"] .menuPanel {
+  background: #1f2937;
+  color: white;
+}
+
+[data-theme="dark"] .menuItem {
+  color: #e5e7eb;
+}
+
+[data-theme="dark"] .menuItem:hover {
+  background: rgba(124, 77, 255, 0.15);
+}

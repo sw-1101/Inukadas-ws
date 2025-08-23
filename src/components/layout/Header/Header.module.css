@@ -12,12 +12,25 @@
 }
 
 .container {
-  @apply flex items-center justify-between h-full px-4 max-w-4xl mx-auto;
+  @apply flex items-center h-full px-4 max-w-4xl mx-auto;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 16px;
 }
 
-/* タイトルエリア */
-.titleArea {
-  @apply flex items-center;
+/* 左エリア - タイトル */
+.leftArea {
+  @apply flex items-center justify-start gap-3;
+}
+
+.menuButton {
+  @apply w-10 h-10 flex items-center justify-center rounded-full;
+  @apply text-base-text-secondary hover:text-main-primary hover:bg-main-light hover:bg-opacity-20;
+  @apply transition-all duration-200 ease-out;
+  @apply border-0 bg-transparent cursor-pointer;
+  @apply focus:outline-none focus:ring-2 focus:ring-main-primary focus:ring-offset-1;
+  min-width: 44px;
+  min-height: 44px;
 }
 
 .title {
@@ -25,9 +38,75 @@
   @apply flex items-center;
 }
 
-/* アクションボタンエリア */
-.actions {
-  @apply flex items-center gap-2;
+/* 中央エリア - ロゴ */
+.centerArea {
+  @apply flex items-center justify-center;
+}
+
+.logoText {
+  height: 50px;
+  width: auto;
+}
+
+/* 右エリア - アクションボタン */
+.rightArea {
+  @apply flex items-center justify-end gap-2;
+}
+
+/* 検索コンテナ */
+.searchContainer {
+  @apply px-4 py-3 border-t border-gray-200;
+  background: rgba(255, 255, 255, 0.95);
+  transition: all 0.3s ease-out;
+  animation: slideDown 0.3s ease-out;
+}
+
+.searchContainer.closing {
+  animation: slideUp 0.3s ease-out forwards;
+}
+
+/* 検索バーアニメーション */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 100px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 100px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .actionButton {
@@ -50,6 +129,16 @@
   @apply text-main-primary bg-main-light bg-opacity-20;
 }
 
+.actionButton.refreshing {
+  @apply opacity-70 cursor-not-allowed;
+}
+
+.spinner {
+  @apply text-main-primary;
+  font-size: 20px;
+  animation: spin 1s linear infinite;
+}
+
 /* アイコンのスタイリング */
 .actionButton svg {
   @apply w-6 h-6;
@@ -63,13 +152,14 @@
   
   .container {
     @apply px-3;
+    gap: 8px;
   }
   
   .title {
     @apply text-lg;
   }
   
-  .actions {
+  .rightArea {
     @apply gap-1;
   }
   

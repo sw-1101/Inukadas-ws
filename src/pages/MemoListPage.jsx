@@ -6,6 +6,8 @@ import { MemoTimeline } from '../components/memo/MemoTimeline';
 import { MemoInput } from '../components/memo/MemoInput';
 import { EditMemoForm } from '../components/memo/EditMemoForm';
 import SearchBox from '../components/forms/SearchBox/SearchBox';
+import Header from '../components/layout/Header/Header';
+import SideMenu from '../components/layout/SideMenu';
 import { useAuth } from '../contexts/AuthContext';
 import { useAuthActions } from '../hooks/useAuthActions';
 import styles from './MemoListPage.module.css';
@@ -37,7 +39,7 @@ const useIsMobile = () => {
 // メイン画面コンポーネント
 const MemoListPageContent = () => {
   const { 
-    state: { memos, loading, error, hasMore, isSearching, searchResults },
+    state: { memos, loading, error, hasMore, isSearching, searchResults, refreshing },
     loadMemos,
     loadMoreMemos,
     searchMemos,
@@ -55,8 +57,8 @@ const MemoListPageContent = () => {
   // UI状態
   const [showInput, setShowInput] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [searchClosing, setSearchClosing] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const [menuClosing, setMenuClosing] = useState(false);
   const [currentlyPlaying, setCurrentlyPlaying] = useState(null);
   const [currentPlayTime, setCurrentPlayTime] = useState(0);
   const [currentAudioDuration, setCurrentAudioDuration] = useState(0); // 実際の音声時間
@@ -67,6 +69,18 @@ const MemoListPageContent = () => {
   // Audio管理
   const audioRef = useRef(null);
   const audioUpdateTimerRef = useRef(null);
+  
+  // 検索エリアの参照
+  const searchRef = useRef(null);
+
+  // 検索を閉じる（アニメーション付き）
+  const closeSearchWithAnimation = useCallback(() => {
+    setSearchClosing(true);
+    setTimeout(() => {
+      setShowSearch(false);
+      setSearchClosing(false);
+    }, 300); // アニメーション時間と合わせる
+  }, []);
 
   // 初期ロード
   useEffect(() => {
@@ -74,6 +88,34 @@ const MemoListPageContent = () => {
       loadMemos();
     }
   }, [user, loadMemos]);
+
+  // 検索エリア外クリックで検索バーを閉じる
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showSearch && !searchClosing && searchRef.current && !searchRef.current.contains(event.target)) {
+        // 検索ボタン自体のクリックは除外
+        const searchButton = event.target.closest('[aria-label="検索"]');
+        if (!searchButton) {
+          closeSearchWithAnimation();
+        }
+      }
+    };
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape' && showSearch && !searchClosing) {
+        closeSearchWithAnimation();
+      }
+    };
+
+    if (showSearch) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleKeyDown);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+        document.removeEventListener('keydown', handleKeyDown);
+      };
+    }
+  }, [showSearch, searchClosing, closeSearchWithAnimation]);
 
   // Audio時間更新
   useEffect(() => {
@@ -266,29 +308,15 @@ const MemoListPageContent = () => {
     refreshMemos();
   }, [refreshMemos]);
 
-  // ログアウト処理
-  const handleLogout = useCallback(async () => {
-    try {
-      await logout();
-      navigate('/login');
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-  }, [logout, navigate]);
 
-  // メニューを閉じる（アニメーション付き）
+  // メニューを閉じる
   const handleMenuClose = useCallback(() => {
-    setMenuClosing(true);
-    setTimeout(() => {
-      setShowMenu(false);
-      setMenuClosing(false);
-    }, 300); // アニメーション時間と同じ
+    setShowMenu(false);
   }, []);
 
   // メニューを開く
   const handleMenuOpen = useCallback(() => {
     setShowMenu(true);
-    setMenuClosing(false);
   }, []);
 
   // 表示するメモ一覧
@@ -297,60 +325,35 @@ const MemoListPageContent = () => {
   return (
     <div className={styles.container}>
       {/* ヘッダー */}
-      <header className={styles.header}>
-        <div className={styles.headerToolbar}>
-          {/* ハンバーガーメニューボタン */}
-          <button
-            className={styles.hamburgerButton}
-            onClick={() => showMenu ? handleMenuClose() : handleMenuOpen()}
-            aria-label="メニュー"
-            type="button"
-          >
-            ☰
-          </button>
-          
-          <h1 className={styles.headerTitle}>
-            📝 音声メモ
-          </h1>
-          
-          <div className={styles.headerActions}>
-            {/* 検索ボタン */}
-            <button
-              className={styles.headerButton}
-              onClick={() => setShowSearch(!showSearch)}
-              aria-label="検索"
-              type="button"
-            >
-              🔍
-            </button>
-            
-            {/* リフレッシュボタン */}
-            <button
-              className={styles.headerButton}
-              onClick={refreshMemos}
-              disabled={loading}
-              aria-label="更新"
-              type="button"
-            >
-              🔄
-            </button>
-          </div>
-        </div>
-        
-        {/* 検索バー */}
-        {showSearch && (
-          <div className={styles.searchContainer}>
-            <SearchBox
-              value={searchQuery}
-              onChange={handleSearch}
-              onClear={handleClearSearch}
-              placeholder="メモを検索..."
-              loading={isSearching}
-              fullWidth
-            />
-          </div>
-        )}
-      </header>
+      <Header
+        ref={searchRef}
+        title="音声メモ"
+        onSearchToggle={() => {
+          if (showSearch && !searchClosing) {
+            closeSearchWithAnimation();
+          } else if (!showSearch && !searchClosing) {
+            setShowSearch(true);
+          }
+        }}
+        onMenuClick={() => showMenu ? handleMenuClose() : handleMenuOpen()}
+        onRefresh={refreshMemos}
+        searchVisible={showSearch}
+        searchClosing={searchClosing}
+        refreshing={refreshing}
+        showMenuButton={true}
+        showRefreshButton={true}
+        className={styles.header}
+        searchComponent={
+          <SearchBox
+            value={searchQuery}
+            onChange={handleSearch}
+            onClear={handleClearSearch}
+            placeholder="メモを検索..."
+            loading={isSearching}
+            fullWidth
+          />
+        }
+      />
 
       {/* メイン内容 */}
       <main className={styles.mainContent}>
@@ -494,60 +497,24 @@ const MemoListPageContent = () => {
         </div>
       )}
 
-      {/* スライドアウトメニュー */}
-      {showMenu && (
-        <>
-          {/* オーバーレイ */}
-          <div 
-            className={`${styles.menuOverlay} ${menuClosing ? styles.menuOverlayClosing : ''}`}
-            onClick={handleMenuClose}
-          />
-          
-          {/* メニューパネル */}
-          <div className={`${styles.menuPanel} ${menuClosing ? styles.menuPanelClosing : ''}`}>
-            <div className={styles.menuHeader}>
-              <div className={styles.menuUserInfo}>
-                <div className={styles.menuUserIcon}>👤</div>
-                <div className={styles.menuUserDetails}>
-                  <div className={styles.menuUserName}>
-                    {user?.displayName || user?.email || 'ユーザー'}
-                  </div>
-                  <div className={styles.menuUserEmail}>
-                    {user?.email}
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <nav className={styles.menuNav}>
-              <button
-                className={styles.menuItem}
-                onClick={() => {
-                  navigate('/profile');
-                  handleMenuClose();
-                }}
-              >
-                <span className={styles.menuItemIcon}>👤</span>
-                プロフィール
-              </button>
-              
-              <button
-                className={styles.menuItem}
-                onClick={() => {
-                  handleLogout();
-                  handleMenuClose();
-                }}
-              >
-                <span className={styles.menuItemIcon}>🚪</span>
-                ログアウト
-              </button>
-            </nav>
-          </div>
-        </>
-      )}
+      {/* サイドメニュー */}
+      <SideMenu
+        isOpen={showMenu}
+        onClose={handleMenuClose}
+      />
 
       {/* 隠しオーディオ要素 */}
       <audio ref={audioRef} style={{ display: 'none' }} />
+
+      {/* リロード中のローディングオーバーレイ */}
+      {refreshing && (
+        <div className={styles.loadingOverlay}>
+          <div className={styles.loadingSpinner}>
+            <div className={styles.spinner}></div>
+            <p className={styles.loadingText}>Loading...</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

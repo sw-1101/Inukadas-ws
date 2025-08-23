@@ -1,5 +1,5 @@
 // ログインフォームコンポーネント
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 import { loginUser } from '../../utils/auth'
 import { useAuth } from '../../contexts/AuthContext'
@@ -14,7 +14,7 @@ import styles from './LoginForm.module.css'
 
 
 
-const LoginForm= ({ onSuccess }) => {
+const LoginForm= ({ onSuccess, showLogo = true }) => {
   const { dispatch } = useAuth()
   const [formData, setFormData] = useState({
     email: '',
@@ -23,8 +23,50 @@ const LoginForm= ({ onSuccess }) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [validationErrors, setValidationErrors] = useState({})
+  const [showGhost, setShowGhost] = useState(false)
+  const [keySequence, setKeySequence] = useState('')
   const ghostRef = useRef(null)
   const exclamationRef = useRef(null)
+
+  // キーボード入力でおばけを表示する機能
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      const newSequence = keySequence + event.key.toLowerCase()
+      
+      // 最新の5文字のみ保持（"obake"の長さ）
+      const trimmedSequence = newSequence.slice(-5)
+      setKeySequence(trimmedSequence)
+      
+      if (trimmedSequence === 'obake') {
+        setShowGhost(true)
+        setKeySequence('') // シーケンスをリセット
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyPress)
+    
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress)
+    }
+  }, [keySequence])
+
+  // フローティングアニメーション完了時におばけを非表示にする
+  useEffect(() => {
+    let floatingTimer = null
+    
+    if (showGhost) {
+      // 35秒のフローティングアニメーション完了後に非表示
+      floatingTimer = setTimeout(() => {
+        setShowGhost(false)
+      }, 35000)
+    }
+    
+    return () => {
+      if (floatingTimer) {
+        clearTimeout(floatingTimer)
+      }
+    }
+  }, [showGhost])
 
   const validateEmail = (email) => {
     if (!email) return 'メールアドレスを入力してください'
@@ -169,13 +211,15 @@ const LoginForm= ({ onSuccess }) => {
       ghostRef.current.classList.add(styles.scared)
       exclamationRef.current.classList.add(styles.show)
       
-      // アニメーション終了後にクラスを削除して元に戻す
+      // アニメーション終了後にクラスを削除し、おばけを非表示にする
       setTimeout(() => {
         if (ghostRef.current) {
           ghostRef.current.classList.remove(styles.scared)
           ghostRef.current.style.removeProperty('--scared-start-x')
           ghostRef.current.style.removeProperty('--scared-start-y')
         }
+        // 驚きアニメーション完了後におばけを非表示
+        setShowGhost(false)
       }, 2000)
       
       // ビックリマークは0.5秒でパッと消す（おばけが逃げ始めるタイミング）
@@ -192,9 +236,11 @@ const LoginForm= ({ onSuccess }) => {
   return (
     <div className={styles.card}>
       <div className={styles.cardContent}>
-        <div className={styles.logoContainer}>
-          <InukadasLogo size="medium" variant="primary" animated={false} />
-        </div>
+        {showLogo && (
+          <div className={styles.logoContainer}>
+            <InukadasLogo size="medium" variant="primary" animated={false} />
+          </div>
+        )}
         
         <h1 className={styles.title}>
           ログイン
@@ -266,24 +312,28 @@ const LoginForm= ({ onSuccess }) => {
         </form>
       </div>
       
-      {/* Floating Ghost Animation */}
-      <div className={styles.ghostContainer}>
-        <img 
-          ref={ghostRef}
-          src={ghostSvg}
-          alt="Floating Ghost"
-          className={styles.ghost}
-          onClick={handleGhostClick}
-        />
-      </div>
-      
-      {/* Exclamation Mark - positioned independently */}
-      <div 
-        ref={exclamationRef}
-        className={styles.exclamationMark}
-      >
-        ‼️
-      </div>
+      {/* Floating Ghost Animation - "Obake"入力時のみ表示 */}
+      {showGhost && (
+        <>
+          <div className={styles.ghostContainer}>
+            <img 
+              ref={ghostRef}
+              src={ghostSvg}
+              alt="Floating Ghost"
+              className={styles.ghost}
+              onClick={handleGhostClick}
+            />
+          </div>
+          
+          {/* Exclamation Mark - positioned independently */}
+          <div 
+            ref={exclamationRef}
+            className={styles.exclamationMark}
+          >
+            ‼️
+          </div>
+        </>
+      )}
     </div>
   )
 }

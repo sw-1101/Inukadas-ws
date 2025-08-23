@@ -8,17 +8,16 @@ import {
   TextField,
   Button,
   Box,
-  AppBar,
-  Toolbar,
-  IconButton,
   Alert,
   Avatar,
 } from '@mui/material'
-import { ArrowBack, Save, AccountCircle } from '@mui/icons-material'
+import { Save, AccountCircle } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { updateProfile } from 'firebase/auth'
 import { auth } from '../config/firebase'
+import Header from '../components/layout/Header/Header'
+import SideMenu from '../components/layout/SideMenu'
 
 // Vue.js経験者向け解説:
 // - プロフィール更新機能の実装
@@ -53,24 +52,25 @@ const ProfilePage= () => {
     }
   }
 
+  const [showMenu, setShowMenu] = useState(false)
+
+  const handleMenuToggle = () => {
+    setShowMenu(!showMenu)
+  }
+
+  const handleMenuClose = () => {
+    setShowMenu(false)
+  }
+
   return (
     <>
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton
-            edge="start"
-            color="inherit"
-            onClick={() => navigate('/memos')}
-          >
-            <ArrowBack />
-          </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            プロフィール設定
-          </Typography>
-        </Toolbar>
-      </AppBar>
+      <Header
+        title="プロフィール設定"
+        showMenuButton={true}
+        onMenuClick={handleMenuToggle}
+      />
 
-      <Container maxWidth="sm" sx={{ mt: 4, mb: 4 }}>
+      <Container maxWidth="sm" sx={{ mt: 12, mb: 4 }}>
         <Card>
           <CardContent>
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 4 }}>
@@ -159,6 +159,12 @@ const ProfilePage= () => {
           </CardContent>
         </Card>
       </Container>
+
+      {/* サイドメニュー */}
+      <SideMenu
+        isOpen={showMenu}
+        onClose={handleMenuClose}
+      />
     </>
   )
 }

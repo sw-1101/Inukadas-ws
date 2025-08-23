@@ -18,8 +18,8 @@
 
 /* Size variations for image logo */
 .small .logoImage {
-  height: 120px;
-  width: 90%;
+  height: 40px;
+  width: auto;
 }
 
 .medium .logoImage {

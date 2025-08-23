@@ -1,18 +1,30 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import classNames from 'classnames';
+import searchIcon from '../../../assets/search-icon.svg';
+import reloadIcon from '../../../assets/reload-icon.svg';
+import logoText from '../../../assets/Inukadas-logo-text.svg';
 import styles from './Header.module.css';
 
 
-const Header= ({
+const Header = React.forwardRef(({
   title,
   onSearchToggle,
   onThemeToggle,
   onSettingsClick,
+  onMenuClick,
+  onRefresh,
+  onBackClick,
   searchVisible = false,
+  searchClosing = false,
+  refreshing = false,
   isDarkMode = false,
   className,
-}) => {
+  showMenuButton = false,
+  showRefreshButton = false,
+  showBackButton = false,
+  searchComponent = null,
+}, ref) => {
   return (
     <motion.header
       className={classNames(styles.header, className)}
@@ -21,8 +33,30 @@ const Header= ({
       transition={{ duration: 0.3, ease: 'easeOut' }}
     >
       <div className={styles.container}>
-        {/* タイトルエリア */}
-        <div className={styles.titleArea}>
+        {/* 左エリア - 戻るボタン/メニューボタンとタイトル */}
+        <div className={styles.leftArea}>
+          {showBackButton && onBackClick && (
+            <motion.button
+              className={styles.menuButton}
+              onClick={onBackClick}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              aria-label="戻る"
+            >
+              <BackIcon />
+            </motion.button>
+          )}
+          {showMenuButton && onMenuClick && (
+            <motion.button
+              className={styles.menuButton}
+              onClick={onMenuClick}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              aria-label="メニュー"
+            >
+              <MenuIcon />
+            </motion.button>
+          )}
           <motion.h1 
             className={styles.title}
             whileHover={{ scale: 1.02 }}
@@ -32,8 +66,22 @@ const Header= ({
           </motion.h1>
         </div>
 
-        {/* アクションボタンエリア */}
-        <div className={styles.actions}>
+        {/* 中央エリア - ロゴ */}
+        <div className={styles.centerArea}>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.2 }}
+          >
+            <img 
+              src={logoText} 
+              alt="Inukadas" 
+              className={styles.logoText}
+            />
+          </motion.div>
+        </div>
+
+        {/* 右エリア - アクションボタン */}
+        <div className={styles.rightArea}>
           {onSearchToggle && (
             <motion.button
               className={classNames(styles.actionButton, {
@@ -44,7 +92,22 @@ const Header= ({
               whileTap={{ scale: 0.95 }}
               aria-label="検索"
             >
-              <SearchIcon />
+              <img src={searchIcon} alt="検索" width="24" height="24" />
+            </motion.button>
+          )}
+
+          {showRefreshButton && onRefresh && (
+            <motion.button
+              className={classNames(styles.actionButton, {
+                [styles.refreshing]: refreshing
+              })}
+              onClick={onRefresh}
+              disabled={refreshing}
+              whileHover={{ scale: refreshing ? 1 : 1.05 }}
+              whileTap={{ scale: refreshing ? 1 : 0.95 }}
+              aria-label="更新"
+            >
+              <img src={reloadIcon} alt="更新" width="24" height="24" />
             </motion.button>
           )}
 
@@ -75,17 +138,41 @@ const Header= ({
           )}
         </div>
       </div>
+
+      {/* 検索バー */}
+      {searchVisible && searchComponent && (
+        <div 
+          className={classNames(styles.searchContainer, {
+            [styles.closing]: searchClosing
+          })} 
+          ref={ref}
+        >
+          {searchComponent}
+        </div>
+      )}
     </motion.header>
   );
-};
+});
+
+Header.displayName = 'Header';
 
 // アイコンコンポーネント（SVG）
-const SearchIcon= () => (
+
+const MenuIcon= () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="11" cy="11" r="8" />
-    <path d="21 21l-4.35-4.35" />
+    <line x1="3" y1="6" x2="21" y2="6" />
+    <line x1="3" y1="12" x2="21" y2="12" />
+    <line x1="3" y1="18" x2="21" y2="18" />
   </svg>
 );
+
+const BackIcon= () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M19 12H5" />
+    <path d="M12 19l-7-7 7-7" />
+  </svg>
+);
+
 
 const MoonIcon= () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

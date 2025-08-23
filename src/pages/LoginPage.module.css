@@ -1,17 +1,56 @@
 /* ログインページのスタイル */
 
 .container {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 0 16px;
+  min-height: 100vh;
+  padding: 0;
 }
 
 .content {
   min-height: 100vh;
   display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+/* ロゴセクション（左側） */
+.logoSection {
+  flex: 1;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+}
+
+.logoContainer {
+  text-align: center;
+  color: white;
+}
+
+.logoWrapper {
+  max-width: 400px;
+}
+
+.logoImage {
+  width: 350px;
+  height: 350px;
+  filter: brightness(0) invert(1);
+  opacity: 0;
+  transform: scale(0.8);
+  animation: logoFadeIn 1.2s ease-out 0.3s forwards;
+}
+
+/* フォームセクション（右側） */
+.formSection {
+  flex: 1;
+  background: #ffffff;
+  min-height: 100vh;
+  display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 32px 0;
+  padding: 32px;
+  max-width: 500px;
 }
 
 .loadingContainer {
@@ -52,4 +91,43 @@
   outline: 2px solid var(--primary-main, #1976d2);
   outline-offset: 2px;
   border-radius: 2px;
+}
+
+/* アニメーション */
+@keyframes logoFadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* スマホ用レスポンシブ対応 */
+@media (max-width: 768px) {
+  .content {
+    flex-direction: column;
+  }
+  
+  .logoSection {
+    min-height: 40vh;
+    padding: 24px 16px;
+  }
+  
+  .logoImage {
+    width: 352px;
+    height: auto;
+    max-width: calc(100vw - 32px);
+    opacity: 0;
+    transform: scale(0.8);
+    animation: logoFadeIn 1.2s ease-out 0.3s forwards;
+  }
+  
+  .formSection {
+    min-height: 60vh;
+    max-width: none;
+    padding: 24px 16px;
+  }
 }
