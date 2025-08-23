@@ -121,8 +121,8 @@ export const MemoCard= ({
     
     // 文字起こしまたはテキストから自動生成
     let content = '';
-    if (hasText(memo) && memo.textContent) {
-      content = memo.textContent;
+    if (hasText(memo) && memo.content) {
+      content = memo.content;
     } else if (hasAudio(memo) && memo.transcription) {
       content = memo.transcription;
     }
@@ -140,7 +140,7 @@ export const MemoCard= ({
     
     // 混合モードの場合は両方を表示
     if (memo.type === 'mixed') {
-      const textPart = memo.textContent || '';
+      const textPart = memo.content || '';
       const transcriptionPart = memo.transcription || '';
       
       if (textPart && transcriptionPart) {
@@ -150,8 +150,8 @@ export const MemoCard= ({
       } else if (transcriptionPart) {
         content = `[文字起こし]\n${transcriptionPart}`;
       }
-    } else if (hasText(memo) && memo.textContent) {
-      content = memo.textContent;
+    } else if (hasText(memo) && memo.content) {
+      content = memo.content;
     } else if (hasAudio(memo) && memo.transcription) {
       content = memo.transcription;
     }
@@ -337,9 +337,9 @@ export const MemoCard= ({
             )}
 
             {/* 文字数 */}
-            {hasText(memo) && memo.textContent && (
+            {hasText(memo) && memo.content && (
               <span className={classNames(styles.chip, styles.chipSmall, styles.chipDefault)}>
-                {memo.textContent.length}文字
+                {memo.content.length}文字
               </span>
             )}
           </div>
