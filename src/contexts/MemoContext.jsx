@@ -130,7 +130,7 @@ export const MemoProvider= ({ children }) => {
     const userId = authService.getCurrentUserId();
     if (!userId) return;
 
-    dispatch({ type: "PLACEHOLDER" });
+    dispatch({ type: "MEMOS_LOADING" });
 
     try {
       const result = await firestoreService.getMemos(
@@ -151,7 +151,7 @@ export const MemoProvider= ({ children }) => {
       lastDocRef.current = result.lastDoc;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to load memos';
-      dispatch({ type: "PLACEHOLDER" });
+      dispatch({ type: "MEMOS_ERROR", payload: errorMessage });
     }
   }, [state.filter, state.sort]);
 
@@ -162,7 +162,7 @@ export const MemoProvider= ({ children }) => {
     const userId = authService.getCurrentUserId();
     if (!userId || !state.hasMore || state.loading) return;
 
-    dispatch({ type: "PLACEHOLDER" });
+    dispatch({ type: "MEMOS_LOADING" });
 
     try {
       const result = await firestoreService.getMemos(
@@ -189,7 +189,7 @@ export const MemoProvider= ({ children }) => {
       lastDocRef.current = result.lastDoc;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to load more memos';
-      dispatch({ type: "PLACEHOLDER" });
+      dispatch({ type: "MEMOS_ERROR", payload: errorMessage });
     }
   }, [state.filter, state.sort, state.hasMore, state.loading, state.memos]);
 
@@ -203,13 +203,13 @@ export const MemoProvider= ({ children }) => {
       // 作成したメモを取得して即座に表示
       const newMemo = await firestoreService.getMemo(memoId);
       if (newMemo) {
-        dispatch({ type: "PLACEHOLDER" });
+        dispatch({ type: "MEMO_ADDED", payload: newMemo });
       }
       
       return memoId;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to create memo';
-      dispatch({ type: "PLACEHOLDER" });
+      dispatch({ type: "MEMOS_ERROR", payload: errorMessage });
       throw error;
     }
   }, []);
@@ -220,9 +220,14 @@ export const MemoProvider= ({ children }) => {
   const updateMemo = useCallback(async (memoId, updateData) => {
     try {
       await firestoreService.updateMemo(memoId, updateData);
+      // 更新されたメモを取得してstateを更新
+      const updatedMemo = await firestoreService.getMemo(memoId);
+      if (updatedMemo) {
+        dispatch({ type: "MEMO_UPDATED", payload: updatedMemo });
+      }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to update memo';
-      dispatch({ type: "PLACEHOLDER" });
+      dispatch({ type: "MEMOS_ERROR", payload: errorMessage });
       throw error;
     }
   }, []);
@@ -233,10 +238,10 @@ export const MemoProvider= ({ children }) => {
   const deleteMemo = useCallback(async (memoId) => {
     try {
       await firestoreService.deleteMemo(memoId);
-      dispatch({ type: "PLACEHOLDER" });
+      dispatch({ type: "MEMO_DELETED", payload: memoId });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to delete memo';
-      dispatch({ type: "PLACEHOLDER" });
+      dispatch({ type: "MEMOS_ERROR", payload: errorMessage });
       throw error;
     }
   }, []);
@@ -248,14 +253,14 @@ export const MemoProvider= ({ children }) => {
     const userId = authService.getCurrentUserId();
     if (!userId || !query.trim()) return;
 
-    dispatch({ type: "PLACEHOLDER" });
+    dispatch({ type: "SEARCH_START" });
 
     try {
       const results = await firestoreService.searchMemos(userId, query);
-      dispatch({ type: "PLACEHOLDER" });
+      dispatch({ type: "SEARCH_SUCCESS", payload: results });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Search failed';
-      dispatch({ type: "PLACEHOLDER" });
+      dispatch({ type: "SEARCH_ERROR", payload: errorMessage });
     }
   }, []);
 
@@ -263,22 +268,22 @@ export const MemoProvider= ({ children }) => {
    * Clear search results
    */
   const clearSearch = useCallback(() => {
-    dispatch({ type: "PLACEHOLDER" });
+    dispatch({ type: "SEARCH_CLEAR" });
   }, []);
 
   /**
    * Set memo filter
    */
-  const setFilter = useCallback(() => {
-    dispatch({ type: "PLACEHOLDER" });
+  const setFilter = useCallback((filter) => {
+    dispatch({ type: "SET_FILTER", payload: filter });
     lastDocRef.current = null; // Reset pagination
   }, []);
 
   /**
    * Set memo sort
    */
-  const setSort = useCallback(() => {
-    dispatch({ type: "PLACEHOLDER" });
+  const setSort = useCallback((sort) => {
+    dispatch({ type: "SET_SORT", payload: sort });
     lastDocRef.current = null; // Reset pagination
   }, []);
 
@@ -327,7 +332,7 @@ export const MemoProvider= ({ children }) => {
    * Clear error state
    */
   const clearError = useCallback(() => {
-    dispatch({ type: "PLACEHOLDER" });
+    dispatch({ type: "MEMOS_ERROR", payload: null });
   }, []);
 
   /**
@@ -341,7 +346,7 @@ export const MemoProvider= ({ children }) => {
         unsubscribeRef.current();
         unsubscribeRef.current = null;
       }
-      dispatch({ type: "PLACEHOLDER" });
+      dispatch({ type: "MEMOS_RESET" });
       return;
     }
 
