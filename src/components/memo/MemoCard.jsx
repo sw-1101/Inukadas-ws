@@ -25,7 +25,8 @@ export const MemoCard= ({
   onPause,
   onDelete,
   onEdit,
-  onShare
+  onShare,
+  onDownload
 }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const menuOpen = Boolean(anchorEl);
@@ -224,6 +225,17 @@ export const MemoCard= ({
                       >
                         <span className={styles.menuItemIcon}>✏️</span>
                         編集
+                      </button>
+                    )}
+                    
+                    {onDownload && (
+                      <button 
+                        className={styles.menuItem}
+                        onClick={() => { onDownload(); handleMenuClose(); }}
+                        type="button"
+                      >
+                        <span className={styles.menuItemIcon}>⬇️</span>
+                        ダウンロード
                       </button>
                     )}
                     

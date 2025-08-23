@@ -33,6 +33,7 @@ export const MemoTimeline= ({
   onPauseAudio,
   onDeleteMemo,
   onEditMemo,
+  onDownloadMemo,
   onShareMemo,
   onRefresh,
   useVirtualScroll = true,
@@ -169,6 +170,7 @@ export const MemoTimeline= ({
               onPause={onPauseAudio}
               onDelete={() => onDeleteMemo(item.data.id)}
               onEdit={onEditMemo ? () => onEditMemo(item.data.id) : undefined}
+              onDownload={onDownloadMemo ? () => onDownloadMemo(item.data.id) : undefined}
               onShare={onShareMemo ? () => onShareMemo(item.data.id) : undefined}
             />
           </div>
@@ -211,6 +213,7 @@ export const MemoTimeline= ({
                 onPause={onPauseAudio}
                 onDelete={() => onDeleteMemo(item.data.id)}
                 onEdit={onEditMemo ? () => onEditMemo(item.data.id) : undefined}
+                onDownload={onDownloadMemo ? () => onDownloadMemo(item.data.id) : undefined}
                 onShare={onShareMemo ? () => onShareMemo(item.data.id) : undefined}
               />
             </div>

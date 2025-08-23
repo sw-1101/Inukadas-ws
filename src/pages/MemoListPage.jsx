@@ -169,6 +169,62 @@ const MemoListPageContent = () => {
     }
   }, [memos]);
 
+  // メモダウンロード
+  const handleDownloadMemo = useCallback((memoId) => {
+    const memo = memos.find(m => m.id === memoId);
+    if (!memo) return;
+
+    // メモの内容を取得
+    let content = '';
+    let filename = '';
+
+    if (memo.type === 'text' && memo.content) {
+      content = memo.content;
+      filename = `memo_text_${memo.id}.txt`;
+    } else if (memo.type === 'audio' && memo.transcription) {
+      content = memo.transcription;
+      filename = `memo_audio_${memo.id}.txt`;
+    } else if (memo.type === 'mixed') {
+      const textPart = memo.content || '';
+      const transcriptionPart = memo.transcription || '';
+      
+      if (textPart && transcriptionPart) {
+        content = `${textPart}\n\n[音声文字起こし]\n${transcriptionPart}`;
+      } else if (textPart) {
+        content = textPart;
+      } else if (transcriptionPart) {
+        content = `[音声文字起こし]\n${transcriptionPart}`;
+      }
+      filename = `memo_mixed_${memo.id}.txt`;
+    }
+
+    if (!content) {
+      console.warn('No content to download');
+      return;
+    }
+
+    // 作成日時をファイル名に追加
+    const createdAt = memo.createdAt && typeof memo.createdAt.toDate === 'function' 
+      ? memo.createdAt.toDate() 
+      : memo.createdAt instanceof Date 
+      ? memo.createdAt 
+      : new Date();
+    
+    const dateStr = createdAt.toISOString().split('T')[0]; // YYYY-MM-DD
+    const finalFilename = `${dateStr}_${filename}`;
+
+    // Blobを作成してダウンロード
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = finalFilename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }, [memos]);
+
   // メモ更新
   const handleUpdateMemo = useCallback(async (memoId, content) => {
     try {
@@ -314,6 +370,7 @@ const MemoListPageContent = () => {
               onPauseAudio={handlePauseAudio}
               onDeleteMemo={handleDeleteMemo}
               onEditMemo={handleEditMemo}
+              onDownloadMemo={handleDownloadMemo}
               onRefresh={refreshMemos}
               useVirtualScroll={false} // 仮想スクロールを無効化
               height={window.innerHeight - 200}
