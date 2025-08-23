@@ -15,9 +15,15 @@
   padding: 32px;
 }
 
+/* ロゴコンテナ */
+.logoContainer {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
 /* ヘッダー */
 .title {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 600;
   text-align: center;
   margin-bottom: 24px;

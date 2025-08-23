@@ -14,9 +14,15 @@
   padding: 32px;
 }
 
+/* ロゴコンテナ */
+.logoContainer {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
 /* ヘッダー */
 .title {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 600;
   text-align: center;
   margin-bottom: 24px;
@@ -143,6 +149,52 @@
   text-decoration: underline;
 }
 
+/* Ghost Animation */
+.ghostContainer {
+  position: fixed;
+  bottom: 60px;  /* 少し上に配置 */
+  left: 0px;
+  width: 80px;
+  height: 80px;
+  pointer-events: auto;
+  z-index: 1000;
+}
+
+.ghost {
+  width: 80px;
+  height: 80px;
+  animation: ghostFloatWithFlip 35s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+  filter: drop-shadow(0 4px 12px rgba(124, 77, 255, 0.3));
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.ghost:hover {
+  transform: scale(1.1);
+}
+
+.ghost.scared {
+  animation: ghostScared 2s ease-out forwards;
+  position: fixed;
+  left: var(--scared-start-x, 0px);
+  top: var(--scared-start-y, 0px);
+}
+
+.exclamationMark {
+  position: fixed;
+  left: var(--exclamation-x, -100px);
+  top: var(--exclamation-y, -100px);
+  transform: translateX(-50%);
+  font-size: 24px;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1001;
+}
+
+.exclamationMark.show {
+  animation: exclamationPop 0.5s ease-out forwards;
+}
+
 /* アニメーション */
 @keyframes fadeIn {
   from {
@@ -160,6 +212,138 @@
     transform: rotate(360deg);
   }
 }
+
+@keyframes ghostFloatWithFlip {
+  0% {
+    transform: translateY(-30px) translateX(-80px) scaleX(-1);
+  }
+  10% {
+    transform: translateY(-45px) translateX(calc(8vw - 80px)) scaleX(-1);
+  }
+  18% {
+    transform: translateY(-35px) translateX(calc(15vw - 80px)) scaleX(-1);
+  }
+  
+  /* キョロキョロタイム1 - 止まってるので元の向き */
+  20% {
+    transform: translateY(-40px) translateX(calc(18vw - 80px)) scaleX(1);
+  }
+  21% {
+    transform: translateY(-45px) translateX(calc(18vw - 80px)) scaleX(1);
+  }
+  22% {
+    transform: translateY(-35px) translateX(calc(18vw - 80px)) scaleX(1);
+  }
+  23% {
+    transform: translateY(-42px) translateX(calc(18vw - 80px)) scaleX(1);
+  }
+  24% {
+    transform: translateY(-38px) translateX(calc(18vw - 80px)) scaleX(1);
+  }
+  25% {
+    transform: translateY(-40px) translateX(calc(18vw - 80px)) scaleX(1);
+  }
+  
+  /* 右向きに移動再開 */
+  30% {
+    transform: translateY(20px) translateX(calc(25vw - 80px)) scaleX(-1);
+  }
+  40% {
+    transform: translateY(50px) translateX(calc(35vw - 80px)) scaleX(-1);
+  }
+  50% {
+    transform: translateY(35px) translateX(calc(45vw - 80px)) scaleX(-1);
+  }
+  58% {
+    transform: translateY(-15px) translateX(calc(52vw - 80px)) scaleX(-1);
+  }
+  
+  /* キョロキョロタイム2 - 止まってるので元の向き */
+  60% {
+    transform: translateY(-25px) translateX(calc(55vw - 80px)) scaleX(1);
+  }
+  61% {
+    transform: translateY(-35px) translateX(calc(55vw - 80px)) scaleX(1);
+  }
+  62% {
+    transform: translateY(-20px) translateX(calc(55vw - 80px)) scaleX(1);
+  }
+  63% {
+    transform: translateY(-30px) translateX(calc(55vw - 80px)) scaleX(1);
+  }
+  64% {
+    transform: translateY(-22px) translateX(calc(55vw - 80px)) scaleX(1);
+  }
+  66% {
+    transform: translateY(-25px) translateX(calc(55vw - 80px)) scaleX(1);
+  }
+  
+  /* 右向きに移動再開 */
+  75% {
+    transform: translateY(-45px) translateX(calc(68vw - 80px)) scaleX(-1);
+  }
+  85% {
+    transform: translateY(-25px) translateX(calc(82vw - 80px)) scaleX(-1);
+  }
+  95% {
+    transform: translateY(-35px) translateX(calc(95vw - 80px)) scaleX(-1);
+  }
+  100% {
+    transform: translateY(-30px) translateX(calc(100vw - 40px)) scaleX(-1);
+  }
+}
+
+@keyframes ghostScared {
+  0% {
+    transform: scale(1) translate(0, 0) rotate(0deg);
+  }
+  10% {
+    transform: scale(1.3) translate(0, 0) rotate(10deg);
+  }
+  20% {
+    transform: scale(1.2) translate(0, 0) rotate(-8deg);
+  }
+  30% {
+    transform: scale(1.1) translate(0, 0) rotate(5deg);
+  }
+  40% {
+    transform: scale(1) translate(0, -20px) rotate(0deg);
+  }
+  50% {
+    transform: scale(1) translate(20px, -40px) rotate(15deg);
+  }
+  70% {
+    transform: scale(0.8) translate(150px, -80px) rotate(45deg);
+  }
+  90% {
+    transform: scale(0.5) translate(300px, -120px) rotate(90deg);
+  }
+  100% {
+    transform: scale(0.2) translate(500px, -180px) rotate(180deg);
+    opacity: 0;
+  }
+}
+
+@keyframes exclamationPop {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) scale(0) translateY(10px);
+  }
+  30% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.3) translateY(-5px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1) translateY(0px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.8) translateY(-10px);
+  }
+}
+
+
 
 /* レスポンシブ */
 @media (max-width: 768px) {

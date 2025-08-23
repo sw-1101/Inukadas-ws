@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import { registerUser } from '../../utils/auth'
 import { useAuth } from '../../contexts/AuthContext'
+import { InukadasLogo } from '../common/InukadasLogo'
 import styles from './RegisterForm.module.css'
 
 // Vue.js経験者向け解説:
@@ -111,6 +112,10 @@ const RegisterForm= ({ onSuccess }) => {
   return (
     <div className={styles.card}>
       <div className={styles.cardContent}>
+        <div className={styles.logoContainer}>
+          <InukadasLogo size="medium" variant="primary" animated={false} />
+        </div>
+        
         <h1 className={styles.title}>
           新規登録
         </h1>

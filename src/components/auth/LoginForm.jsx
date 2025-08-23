@@ -1,8 +1,10 @@
 // ログインフォームコンポーネント
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 import { loginUser } from '../../utils/auth'
 import { useAuth } from '../../contexts/AuthContext'
+import { InukadasLogo } from '../common/InukadasLogo'
+import ghostSvg from '../../assets/ghost.svg'
 import styles from './LoginForm.module.css'
 
 // Vue.js経験者向け解説:
@@ -21,6 +23,8 @@ const LoginForm= ({ onSuccess }) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [validationErrors, setValidationErrors] = useState({})
+  const ghostRef = useRef(null)
+  const exclamationRef = useRef(null)
 
   const validateEmail = (email) => {
     if (!email) return 'メールアドレスを入力してください'
@@ -148,9 +152,50 @@ const LoginForm= ({ onSuccess }) => {
     }
   }
 
+  const handleGhostClick = () => {
+    if (ghostRef.current && exclamationRef.current) {
+      const rect = ghostRef.current.getBoundingClientRect()
+      const currentX = rect.left
+      const currentY = rect.top
+      
+      // おばけの現在位置を基準にカスタムプロパティを設定
+      ghostRef.current.style.setProperty('--scared-start-x', `${currentX}px`)
+      ghostRef.current.style.setProperty('--scared-start-y', `${currentY}px`)
+      
+      // ビックリマークもおばけの頭上に位置を設定
+      exclamationRef.current.style.setProperty('--exclamation-x', `${currentX + 40}px`)
+      exclamationRef.current.style.setProperty('--exclamation-y', `${currentY - 50}px`)
+      
+      ghostRef.current.classList.add(styles.scared)
+      exclamationRef.current.classList.add(styles.show)
+      
+      // アニメーション終了後にクラスを削除して元に戻す
+      setTimeout(() => {
+        if (ghostRef.current) {
+          ghostRef.current.classList.remove(styles.scared)
+          ghostRef.current.style.removeProperty('--scared-start-x')
+          ghostRef.current.style.removeProperty('--scared-start-y')
+        }
+      }, 2000)
+      
+      // ビックリマークは0.5秒でパッと消す（おばけが逃げ始めるタイミング）
+      setTimeout(() => {
+        if (exclamationRef.current) {
+          exclamationRef.current.classList.remove(styles.show)
+          exclamationRef.current.style.removeProperty('--exclamation-x')
+          exclamationRef.current.style.removeProperty('--exclamation-y')
+        }
+      }, 500)
+    }
+  }
+
   return (
     <div className={styles.card}>
       <div className={styles.cardContent}>
+        <div className={styles.logoContainer}>
+          <InukadasLogo size="medium" variant="primary" animated={false} />
+        </div>
+        
         <h1 className={styles.title}>
           ログイン
         </h1>
@@ -219,6 +264,25 @@ const LoginForm= ({ onSuccess }) => {
             </RouterLink>
           </div>
         </form>
+      </div>
+      
+      {/* Floating Ghost Animation */}
+      <div className={styles.ghostContainer}>
+        <img 
+          ref={ghostRef}
+          src={ghostSvg}
+          alt="Floating Ghost"
+          className={styles.ghost}
+          onClick={handleGhostClick}
+        />
+      </div>
+      
+      {/* Exclamation Mark - positioned independently */}
+      <div 
+        ref={exclamationRef}
+        className={styles.exclamationMark}
+      >
+        ‼️
       </div>
     </div>
   )

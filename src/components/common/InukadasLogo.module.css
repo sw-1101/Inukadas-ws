@@ -1,0 +1,89 @@
+/* Inukadas Logo Styles */
+
+.logoContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.logoImage {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+/* Size variations for image logo */
+.small .logoImage {
+  height: 80px;
+}
+
+.medium .logoImage {
+  height: 140px;
+}
+
+.large .logoImage {
+  height: 200px;
+}
+
+/* Color variations */
+.primary {
+  color: #7c4dff;
+}
+
+.secondary {
+  color: #666;
+}
+
+.white {
+  color: white;
+}
+
+/* Animation effects for image logo */
+.animated .logoImage {
+  animation: logoFloat 3s ease-in-out infinite;
+}
+
+/* Hover effects for image logo */
+.logoContainer:hover .logoImage {
+  transform: scale(1.05);
+  filter: drop-shadow(0 4px 12px rgba(124, 77, 255, 0.3));
+}
+
+/* Keyframe animations */
+@keyframes logoFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .medium .logoImage {
+    height: 120px;
+  }
+  
+  .large .logoImage {
+    height: 160px;
+  }
+}
+
+@media (max-width: 480px) {
+  .small .logoImage {
+    height: 70px;
+  }
+  
+  .medium .logoImage {
+    height: 100px;
+  }
+  
+  .large .logoImage {
+    height: 140px;
+  }
+}
