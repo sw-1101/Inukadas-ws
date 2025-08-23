@@ -1,0 +1,459 @@
+/* MemoInput コンポーネント用 CSS Modules */
+
+/* コンテナ */
+.container {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: #ffffff;
+  border-top: 1px solid #e0e0e0;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.content {
+  padding: 16px;
+}
+
+/* モード選択 */
+.modeSelector {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  justify-content: center;
+}
+
+.modeButton {
+  background: none;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #666;
+}
+
+.modeButton:hover:not(:disabled) {
+  background-color: #f5f5f5;
+}
+
+.modeButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.modeButton.active {
+  color: #7c4dff;
+  background-color: #f3e5f5;
+}
+
+.modeButtonMixed {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* エラー表示 */
+.errorAlert {
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background-color: #ffebee;
+  border: 1px solid #f44336;
+  border-radius: 4px;
+  color: #d32f2f;
+  position: relative;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.errorClose {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #d32f2f;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.errorClose:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* 処理進捗表示 */
+.progressContainer {
+  margin-bottom: 16px;
+  padding: 16px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.progressTitle {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.progressBar {
+  width: 100%;
+  height: 8px;
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+
+.progressBarFill {
+  height: 100%;
+  background-color: #7c4dff;
+  transition: width 0.3s ease;
+}
+
+.stepper {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+
+.step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 12px;
+  right: -50%;
+  left: 50%;
+  height: 2px;
+  background-color: #e0e0e0;
+  z-index: 1;
+}
+
+.step.active::after {
+  background-color: #7c4dff;
+}
+
+.stepIcon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  color: #666;
+  z-index: 2;
+  position: relative;
+}
+
+.stepIcon.active {
+  background-color: #7c4dff;
+  color: white;
+}
+
+.stepLabel {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #666;
+  text-align: center;
+}
+
+.transcriptionPreview {
+  margin-top: 16px;
+  padding: 8px;
+  background-color: #e8f5e8;
+  border-radius: 4px;
+}
+
+.transcriptionCaption {
+  font-size: 12px;
+  color: #2e7d32;
+  margin-bottom: 4px;
+}
+
+.transcriptionText {
+  font-size: 14px;
+  color: #333;
+}
+
+/* テキスト入力 */
+.textInputContainer {
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.textArea {
+  width: 100%;
+  min-height: 80px;
+  max-height: 160px;
+  padding: 12px 40px 12px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: vertical;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.textArea:focus {
+  outline: none;
+  border-color: #7c4dff;
+  box-shadow: 0 0 0 2px rgba(124, 77, 255, 0.2);
+}
+
+.textArea:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.textAreaClearButton {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.textAreaClearButton:hover:not(:disabled) {
+  background-color: #f5f5f5;
+}
+
+.textAreaClearButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.characterCount {
+  position: absolute;
+  bottom: -20px;
+  right: 0;
+  font-size: 12px;
+  color: #666;
+}
+
+/* 音声録音・再生 */
+.audioContainer {
+  margin-bottom: 16px;
+}
+
+.audioControls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.recordButton {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.recordButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.recordButtonStart {
+  background-color: #7c4dff;
+  color: white;
+}
+
+.recordButtonStart:hover:not(:disabled) {
+  background-color: #6200ea;
+}
+
+.recordButtonStop {
+  background-color: #f44336;
+  color: white;
+}
+
+.recordButtonStop:hover:not(:disabled) {
+  background-color: #d32f2f;
+}
+
+.audioPlayback {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.audioPlayer {
+  height: 40px;
+}
+
+.audioDeleteButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #f44336;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.audioDeleteButton:hover:not(:disabled) {
+  background-color: #ffebee;
+}
+
+.audioDeleteButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.recordingIndicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #f44336;
+}
+
+.recordingDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #f44336;
+  animation: pulse 1s infinite;
+}
+
+.recordingText {
+  font-size: 12px;
+}
+
+/* 送信ボタン */
+.submitContainer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.submitButton {
+  padding: 12px 24px;
+  background-color: #7c4dff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.submitButton:hover:not(:disabled) {
+  background-color: #6200ea;
+}
+
+.submitButton:disabled {
+  background-color: #bdbdbd;
+  cursor: not-allowed;
+}
+
+.submitSpinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* アニメーション */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* アイコン */
+.icon {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+.iconSmall {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+/* レスポンシブ */
+@media (max-width: 768px) {
+  .content {
+    padding: 12px;
+  }
+  
+  .modeSelector {
+    margin-bottom: 12px;
+  }
+  
+  .textArea {
+    min-height: 60px;
+    max-height: 120px;
+  }
+  
+  .audioControls {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+}

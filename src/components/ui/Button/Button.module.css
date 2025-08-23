@@ -1,0 +1,144 @@
+/* Button コンポーネントスタイル - LINE風紫系UI */
+
+.button {
+  @apply inline-flex items-center justify-center font-medium transition-all duration-200 ease-out;
+  @apply border-0 cursor-pointer outline-none relative overflow-hidden;
+  @apply focus:ring-2 focus:ring-purple-500 focus:ring-offset-2;
+  
+  /* デフォルトでホバー・フォーカス状態の変化を無効化（Framer Motionで制御） */
+  transform: translateZ(0); /* GPU加速 */
+}
+
+/* バリアント - primary */
+.primary {
+  @apply text-white bg-gradient-to-br from-purple-600 to-purple-700 shadow-lg;
+}
+
+.primary:hover:not(.disabled):not(.loading) {
+  @apply from-purple-500 to-purple-600 shadow-xl;
+}
+
+.primary:active:not(.disabled):not(.loading) {
+  @apply from-purple-700 to-purple-800;
+}
+
+/* バリアント - secondary */
+.secondary {
+  @apply bg-base-tertiary text-base-text-primary border border-base-border;
+}
+
+.secondary:hover:not(.disabled):not(.loading) {
+  @apply bg-base-border text-main-primary border-main-light;
+}
+
+/* バリアント - ghost */
+.ghost {
+  @apply bg-transparent text-main-primary;
+}
+
+.ghost:hover:not(.disabled):not(.loading) {
+  @apply bg-main-light bg-opacity-20;
+}
+
+/* バリアント - error */
+.error {
+  @apply bg-accent-error text-white;
+  box-shadow: var(--shadow-card);
+}
+
+.error:hover:not(.disabled):not(.loading) {
+  @apply bg-red-600;
+}
+
+/* バリアント - success */
+.success {
+  @apply bg-accent-success text-white;
+  box-shadow: var(--shadow-card);
+}
+
+.success:hover:not(.disabled):not(.loading) {
+  @apply bg-green-600;
+}
+
+/* サイズ - small */
+.sm {
+  @apply px-3 py-2 text-sm rounded-lg min-h-[32px];
+}
+
+/* サイズ - medium (デフォルト) */
+.md {
+  @apply px-4 py-3 text-base rounded-xl min-h-[40px];
+}
+
+/* サイズ - large */
+.lg {
+  @apply px-6 py-4 text-lg rounded-2xl min-h-[48px];
+}
+
+/* 全幅 */
+.fullWidth {
+  @apply w-full;
+}
+
+/* 無効化状態 */
+.disabled {
+  @apply opacity-60 cursor-not-allowed;
+  pointer-events: none;
+}
+
+/* ローディング状態 */
+.loading {
+  @apply cursor-wait;
+  pointer-events: none;
+}
+
+/* ローディングスピナー */
+.spinner {
+  @apply absolute inset-0 flex items-center justify-center;
+}
+
+.spinnerCircle {
+  @apply w-5 h-5 border-2 border-current border-t-transparent rounded-full;
+}
+
+/* コンテンツ */
+.content {
+  @apply transition-opacity duration-200;
+}
+
+.contentHidden {
+  @apply opacity-0;
+}
+
+/* アクセシビリティ - フォーカス表示 */
+.button:focus-visible {
+  @apply ring-2 ring-main-primary ring-offset-2;
+}
+
+/* タッチデバイス対応 */
+@media (max-width: 640px) {
+  .button {
+    @apply min-h-[44px]; /* タッチターゲット最小サイズ */
+  }
+  
+  .sm {
+    @apply min-h-[44px] px-4 py-3;
+  }
+}
+
+/* ダークモード対応 */
+[data-theme="dark"] .secondary {
+  @apply bg-gray-700 text-gray-200 border-gray-600;
+}
+
+[data-theme="dark"] .secondary:hover:not(.disabled):not(.loading) {
+  @apply bg-gray-600 text-main-light border-main-primary;
+}
+
+[data-theme="dark"] .ghost {
+  @apply text-main-light;
+}
+
+[data-theme="dark"] .ghost:hover:not(.disabled):not(.loading) {
+  @apply bg-main-primary bg-opacity-20;
+}

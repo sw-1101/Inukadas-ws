@@ -1,0 +1,308 @@
+/* MemoCard スタイル - LINE風紫系UI */
+
+.card {
+  @apply w-full mb-2 rounded-xl border transition-all duration-200;
+  background-color: var(--base-primary);
+  border-color: var(--base-border);
+  box-shadow: var(--shadow-card);
+}
+
+.card:hover {
+  @apply shadow-lg;
+  transform: translateY(-1px);
+}
+
+.cardPlaying {
+  border-width: 2px;
+  border-color: var(--main-primary);
+  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.2);
+}
+
+.cardContent {
+  @apply p-4;
+}
+
+/* ヘッダー */
+.header {
+  @apply mb-3;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+}
+
+.headerLeft {
+  @apply flex-1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.typeIcon {
+  @apply flex items-center;
+  color: var(--main-primary);
+  font-size: 18px;
+}
+
+.typeIconMixed {
+  display: flex;
+  gap: 4px;
+}
+
+.title {
+  @apply text-base font-semibold flex-1;
+  color: var(--base-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.timestamp {
+  @apply text-xs;
+  color: var(--base-text-secondary);
+}
+
+.menuButton {
+  @apply p-1 rounded-full transition-colors duration-200;
+  background: transparent;
+  border: none;
+  color: var(--base-text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menuButton:hover {
+  background-color: var(--base-tertiary);
+}
+
+/* ドロップダウンメニュー */
+.menu {
+  @apply absolute z-50 rounded-lg shadow-lg border;
+  background-color: var(--base-primary);
+  border-color: var(--base-border);
+  min-width: 140px;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.menuItem {
+  @apply px-3 py-2 text-sm cursor-pointer transition-colors duration-150;
+  color: var(--base-text-primary);
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.menuItem:hover {
+  background-color: var(--base-tertiary);
+}
+
+.menuItem:first-child {
+  @apply rounded-t-lg;
+}
+
+.menuItem:last-child {
+  @apply rounded-b-lg;
+}
+
+.menuItemDanger {
+  color: var(--accent-error);
+}
+
+.menuItemDanger:hover {
+  background-color: #fef2f2;
+}
+
+.menuItemIcon {
+  @apply flex items-center justify-center;
+  font-size: 16px;
+}
+
+/* 内容プレビュー */
+.contentPreview {
+  @apply mb-4 text-sm leading-relaxed;
+  color: var(--base-text-secondary);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: pre-line;
+}
+
+.contentPreviewNormal {
+  -webkit-line-clamp: 3;
+}
+
+.contentPreviewMixed {
+  -webkit-line-clamp: 5;
+}
+
+/* 音声コントロール */
+.audioControls {
+  @apply mb-3;
+}
+
+.progressContainer {
+  @apply mb-2;
+}
+
+.progressBar {
+  @apply w-full h-1 rounded-full overflow-hidden;
+  background-color: #e5e7eb;
+}
+
+.progressFill {
+  @apply h-full rounded-full transition-all duration-100;
+  background-color: var(--main-primary);
+}
+
+.audioControls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.audioLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.audioRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.playButton {
+  @apply w-8 h-8 rounded-full border-0 cursor-pointer transition-all duration-200;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.playButtonPlay {
+  background-color: var(--main-primary);
+}
+
+.playButtonPlay:hover {
+  background-color: var(--main-dark);
+}
+
+.playButtonPause {
+  background-color: var(--accent-primary);
+}
+
+.playButtonPause:hover {
+  background-color: #be185d;
+}
+
+.duration {
+  @apply text-xs;
+  color: var(--base-text-secondary);
+  font-family: 'Courier New', monospace;
+}
+
+/* チップ（ラベル） */
+.chip {
+  @apply px-2 py-1 text-xs rounded-full border;
+  display: inline-flex;
+  align-items: center;
+  font-weight: 500;
+}
+
+.chipDefault {
+  background-color: var(--base-tertiary);
+  color: var(--base-text-secondary);
+  border-color: var(--base-border);
+}
+
+.chipPrimary {
+  background-color: rgba(124, 58, 237, 0.1);
+  color: var(--main-primary);
+  border-color: var(--main-primary);
+}
+
+.chipSuccess {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: var(--accent-success);
+  border-color: var(--accent-success);
+}
+
+.chipError {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--accent-error);
+  border-color: var(--accent-error);
+}
+
+.chipSmall {
+  @apply px-1.5 py-0.5;
+  font-size: 10px;
+}
+
+/* 音声アイコン */
+.volumeIcon {
+  color: var(--base-text-secondary);
+  font-size: 16px;
+}
+
+/* フッター */
+.footer {
+  @apply pt-3 border-t;
+  border-color: var(--base-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footerLeft {
+  display: flex;
+  gap: 6px;
+}
+
+.footerRight {
+  @apply text-xs;
+  color: var(--base-text-secondary);
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 640px) {
+  .cardContent {
+    @apply p-3;
+  }
+  
+  .header {
+    @apply mb-2;
+  }
+  
+  .title {
+    @apply text-sm;
+  }
+  
+  .contentPreview {
+    @apply text-xs mb-3;
+  }
+  
+  .footerLeft {
+    flex-wrap: wrap;
+  }
+}
+
+/* アニメーション */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}

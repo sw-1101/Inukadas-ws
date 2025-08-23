@@ -1,0 +1,193 @@
+/* MemoTimeline スタイル - LINE風紫系UI */
+
+.container {
+  width: 100%;
+  height: auto;
+  background-color: var(--base-secondary);
+}
+
+.containerVirtual {
+  @apply overflow-hidden;
+  height: var(--timeline-height, 600px);
+}
+
+/* リスト */
+.list {
+  width: 100%;
+  background-color: var(--base-primary);
+}
+
+.listItem {
+  @apply px-2 py-0;
+  display: flex;
+  flex-direction: column;
+}
+
+.listItemHeader {
+  @apply px-4 py-2;
+  background-color: var(--base-tertiary);
+  border-bottom: 1px solid var(--base-border);
+}
+
+.listItemMemo {
+  @apply px-2 pb-0;
+}
+
+.listItemLoading {
+  @apply p-4;
+  display: flex;
+  justify-content: center;
+}
+
+/* 日付ヘッダー */
+.dateHeader {
+  @apply text-sm font-semibold;
+  color: var(--base-text-secondary);
+  text-align: center;
+  margin: 0;
+}
+
+/* 区切り線 */
+.divider {
+  @apply my-2;
+  border: none;
+  border-top: 1px solid var(--base-border);
+  margin: 8px 0;
+}
+
+/* スケルトンローダー */
+.skeleton {
+  @apply rounded-lg;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+.skeletonSmall {
+  width: 100%;
+  height: 80px;
+  margin-bottom: 8px;
+}
+
+.skeletonLarge {
+  width: 100%;
+  height: 100px;
+  margin-bottom: 8px;
+}
+
+/* エラー状態 */
+.errorContainer {
+  @apply p-6 text-center;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.errorAlert {
+  @apply p-4 rounded-xl border-l-4;
+  background-color: #ffebee;
+  border-left-color: var(--accent-error);
+  color: #c62828;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-direction: column;
+}
+
+.errorText {
+  @apply text-sm;
+  margin: 8px 0;
+}
+
+.errorButton {
+  @apply px-4 py-2 rounded-lg border border-current bg-transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.errorButton:hover {
+  @apply bg-red-50;
+}
+
+/* 空状態 */
+.emptyContainer {
+  @apply text-center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  color: var(--base-text-secondary);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.emptyTitle {
+  @apply text-lg font-semibold mb-2;
+}
+
+.emptyDescription {
+  @apply text-sm;
+}
+
+/* 追加読み込みボタン */
+.loadMoreContainer {
+  @apply p-4;
+  display: flex;
+  justify-content: center;
+}
+
+.loadMoreButton {
+  @apply px-6 py-3 rounded-xl border transition-all duration-200;
+  background: var(--base-primary);
+  border-color: var(--main-primary);
+  color: var(--main-primary);
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.loadMoreButton:hover {
+  background-color: var(--main-light);
+  background-opacity: 0.1;
+  transform: translateY(-1px);
+}
+
+/* ローディング表示 */
+.loadingContainer {
+  @apply p-4;
+}
+
+/* アニメーション */
+@keyframes skeleton-loading {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* レスポンシブ */
+@media (max-width: 640px) {
+  .listItemHeader {
+    @apply px-2;
+  }
+  
+  .listItemMemo {
+    @apply px-1;
+  }
+  
+  .errorContainer {
+    @apply p-4;
+  }
+  
+  .emptyContainer {
+    height: 300px;
+  }
+}

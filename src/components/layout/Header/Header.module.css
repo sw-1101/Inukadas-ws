@@ -1,0 +1,125 @@
+/* Header コンポーネントスタイル - LINE風紫系UI */
+
+.header {
+  @apply fixed top-0 left-0 right-0 z-50;
+  @apply bg-white border-b border-gray-200;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.95);
+  
+  /* LINE風ヘッダー高さ */
+  height: 64px;
+}
+
+.container {
+  @apply flex items-center justify-between h-full px-4 max-w-4xl mx-auto;
+}
+
+/* タイトルエリア */
+.titleArea {
+  @apply flex items-center;
+}
+
+.title {
+  @apply text-xl font-bold text-base-text-primary m-0;
+  @apply flex items-center;
+}
+
+/* アクションボタンエリア */
+.actions {
+  @apply flex items-center gap-2;
+}
+
+.actionButton {
+  @apply w-10 h-10 flex items-center justify-center rounded-full;
+  @apply text-base-text-secondary hover:text-main-primary hover:bg-main-light hover:bg-opacity-20;
+  @apply transition-all duration-200 ease-out;
+  @apply border-0 bg-transparent cursor-pointer;
+  @apply focus:outline-none focus:ring-2 focus:ring-main-primary focus:ring-offset-1;
+  
+  /* アクセシビリティ - タッチターゲット */
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.actionButton:active {
+  @apply scale-95;
+}
+
+.actionButton.active {
+  @apply text-main-primary bg-main-light bg-opacity-20;
+}
+
+/* アイコンのスタイリング */
+.actionButton svg {
+  @apply w-6 h-6;
+}
+
+/* モバイル対応 */
+@media (max-width: 640px) {
+  .header {
+    height: 56px;
+  }
+  
+  .container {
+    @apply px-3;
+  }
+  
+  .title {
+    @apply text-lg;
+  }
+  
+  .actions {
+    @apply gap-1;
+  }
+  
+  .actionButton {
+    @apply w-11 h-11;
+  }
+}
+
+/* タブレット対応 */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .container {
+    @apply px-6;
+  }
+}
+
+/* デスクトップ対応 */
+@media (min-width: 1025px) {
+  .header {
+    @apply border-0;
+    box-shadow: var(--shadow-card);
+  }
+  
+  .container {
+    @apply max-w-5xl;
+  }
+}
+
+/* ダークモード対応 */
+[data-theme="dark"] .header {
+  @apply bg-gray-800 border-gray-700;
+  background: rgba(31, 41, 55, 0.95);
+}
+
+[data-theme="dark"] .title {
+  @apply text-gray-100;
+}
+
+[data-theme="dark"] .actionButton {
+  @apply text-gray-400 hover:text-main-light;
+}
+
+[data-theme="dark"] .actionButton.active {
+  @apply text-main-light bg-main-primary bg-opacity-20;
+}
+
+/* Reduced motion対応 */
+@media (prefers-reduced-motion: reduce) {
+  .header,
+  .actionButton,
+  .title {
+    transition: none !important;
+  }
+}

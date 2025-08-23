@@ -1,0 +1,109 @@
+/* Modal コンポーネントスタイル - LINE風紫系UI */
+
+.backdrop {
+  @apply fixed inset-0 flex items-center justify-center p-4;
+  z-index: 1000;
+}
+
+/* バックドロップの種類 */
+.blur {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.dark {
+  background: rgba(31, 41, 55, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.transparent {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* フルスクリーンモード */
+.fullScreen {
+  @apply p-0;
+}
+
+/* モーダルコンテンツ */
+.content {
+  @apply bg-base-primary border border-base-border rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto;
+  box-shadow: var(--shadow-modal);
+}
+
+.fullScreenContent {
+  @apply max-w-none max-h-none w-full h-full rounded-none border-0;
+  box-shadow: none;
+}
+
+/* スクロールバーのスタイリング */
+.content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.content::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+.content::-webkit-scrollbar-thumb {
+  @apply bg-base-border rounded-full;
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+  @apply bg-main-light;
+}
+
+/* モバイル対応 */
+@media (max-width: 640px) {
+  .backdrop {
+    @apply p-4;
+  }
+  
+  .content {
+    @apply max-w-none w-full mx-4 rounded-xl;
+  }
+  
+  /* モバイルでのフルスクリーンは画面全体を使用 */
+  .fullScreenContent {
+    @apply mx-0 rounded-none;
+  }
+}
+
+/* 高さが低い画面での対応 */
+@media (max-height: 600px) {
+  .content {
+    @apply max-h-[95vh];
+  }
+}
+
+/* ダークモード対応 */
+[data-theme="dark"] .backdrop.blur {
+  background: rgba(31, 41, 55, 0.9);
+}
+
+[data-theme="dark"] .content {
+  @apply bg-gray-800 border-gray-700;
+}
+
+[data-theme="dark"] .content::-webkit-scrollbar-thumb {
+  @apply bg-gray-600;
+}
+
+[data-theme="dark"] .content::-webkit-scrollbar-thumb:hover {
+  @apply bg-main-light;
+}
+
+/* アクセシビリティ - フォーカス管理 */
+.content:focus {
+  @apply outline-none;
+}
+
+/* Reduced motion対応 */
+@media (prefers-reduced-motion: reduce) {
+  .backdrop,
+  .content {
+    transition: none !important;
+  }
+}

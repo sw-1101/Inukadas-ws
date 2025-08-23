@@ -1,0 +1,212 @@
+name: 🛡️ Branch Protection Checks
+
+on:
+  pull_request:
+    branches: [ main ]
+    types: [opened, synchronize, reopened]
+
+env:
+  NODE_VERSION: '20.x'
+
+jobs:
+  # 必須チェック: TypeScript & ESLint
+  static-analysis:
+    name: 📝 Static Analysis
+    runs-on: ubuntu-latest
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+    
+    - name: 📦 Install dependencies
+      run: npm ci
+    
+    - name: 🔍 TypeScript check
+      run: npm run type-check
+    
+    - name: 🧹 ESLint check
+      run: npm run lint
+
+  # 必須チェック: ユニットテスト
+  unit-tests:
+    name: 🧪 Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+    
+    - name: 📦 Install dependencies
+      run: npm ci
+    
+    - name: 🧪 Run unit tests
+      run: npm run test
+      env:
+        CI: true
+
+  # 必須チェック: コンポーネントテスト
+  component-tests:
+    name: 📚 Component Tests (Storybook)
+    runs-on: ubuntu-latest
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+    
+    - name: 📦 Install dependencies
+      run: npm ci
+    
+    - name: 📚 Build Storybook
+      run: npm run build-storybook
+
+  # 必須チェック: E2Eテスト
+  e2e-tests:
+    name: 🎭 E2E Tests (Playwright)
+    runs-on: ubuntu-latest
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+    
+    - name: 📦 Install dependencies
+      run: npm ci
+    
+    - name: 🏗️ Build application
+      run: npm run build
+      env:
+        VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+        VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+        VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+        VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
+        VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+        VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+    
+    - name: 🎭 Install Playwright
+      run: npx playwright install --with-deps chromium
+    
+    - name: 🎭 Run E2E tests
+      run: npm run test:e2e -- --project=chromium
+      env:
+        CI: true
+    
+    - name: 📤 Upload E2E test results
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: playwright-report
+        path: playwright-report/
+        retention-days: 7
+
+  # 必須チェック: セキュリティスキャン
+  security-scan:
+    name: 🔒 Security Scan
+    runs-on: ubuntu-latest
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+    
+    - name: 📦 Install dependencies
+      run: npm ci
+    
+    - name: 🔒 Run security audit
+      run: npm audit --audit-level high
+      continue-on-error: true
+    
+    - name: 🔍 Dependency vulnerability scan
+      uses: actions/dependency-review-action@v4
+      with:
+        fail-on-severity: high
+
+  # すべてのチェックが成功した場合のみ実行
+  pr-ready:
+    name: ✅ PR Ready for Review
+    runs-on: ubuntu-latest
+    needs: [static-analysis, unit-tests, component-tests, e2e-tests, security-scan]
+    if: success()
+    steps:
+    - name: ✅ All checks passed
+      run: |
+        echo "🎉 All required checks have passed!"
+        echo "📋 Summary:"
+        echo "- ✅ Static Analysis (TypeScript + ESLint)"
+        echo "- ✅ Unit Tests"
+        echo "- ✅ Component Tests (Storybook)"
+        echo "- ✅ E2E Tests (Playwright)"
+        echo "- ✅ Security Scan"
+        echo ""
+        echo "This PR is ready for code review! 🚀"
+    
+    - name: 💬 Comment PR status
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const { data: comments } = await github.rest.issues.listComments({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+          });
+          
+          const botComment = comments.find(comment => 
+            comment.user.type === 'Bot' && 
+            comment.body.includes('🛡️ Branch Protection')
+          );
+          
+          const commentBody = `## 🛡️ Branch Protection チェック完了
+
+**✅ すべての必須チェックが成功しました！**
+
+### 📊 チェック結果
+- ✅ **Static Analysis**: TypeScript型チェック + ESLint
+- ✅ **Unit Tests**: ユニットテスト実行
+- ✅ **Component Tests**: Storybook ビルド
+- ✅ **E2E Tests**: Playwright E2Eテスト
+- ✅ **Security Scan**: セキュリティ脆弱性チェック
+
+### 🚀 次のステップ
+このプルリクエストはコードレビューの準備ができています。
+レビュー承認後、main ブランチにマージできます。
+
+> 🔄 変更をプッシュするたびに、これらのチェックが自動実行されます`;
+
+          if (botComment) {
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: botComment.id,
+              body: commentBody,
+            });
+          } else {
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: commentBody,
+            });
+          }

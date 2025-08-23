@@ -1,0 +1,163 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* LINE風紫系UI カラーパレット（3色ルール適用） */
+:root {
+  /* ベースカラー（70%使用） */
+  --base-primary: #FFFFFF;        /* メイン背景 */
+  --base-secondary: #F9FAFB;      /* セカンダリ背景・タイムライン */
+  --base-tertiary: #F3F4F6;       /* カード・入力エリア背景 */
+  --base-border: #E5E7EB;         /* ボーダー・区切り線 */
+  --base-text-primary: #111827;   /* メインテキスト */
+  --base-text-secondary: #6B7280; /* セカンダリテキスト */
+  
+  /* メインカラー（25%使用）- 紫系グラデーション */
+  --main-primary: #7C3AED;        /* メインパープル - プライマリボタン */
+  --main-secondary: #6366F1;      /* 青紫 - グラデーション用 */
+  --main-light: #C4B5FD;          /* 薄紫 - 自分のメッセージバブル */
+  --main-dark: #5B21B6;           /* 濃紫 - アクティブ・ホバー状態 */
+  --main-gradient: linear-gradient(135deg, #7C3AED, #6366F1);
+  
+  /* アクセントカラー（5%使用） */
+  --accent-primary: #EC4899;      /* ピンク紫 - 録音・重要なアクション */
+  --accent-warning: #F59E0B;      /* アンバー - 警告・注意 */
+  --accent-success: #10B981;      /* エメラルド - 成功・完了 */
+  --accent-error: #EF4444;        /* レッド - エラー・削除 */
+  
+  /* シャドウ・エフェクト */
+  --shadow-bubble: 0 2px 8px rgba(124, 58, 237, 0.25);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-modal: 0 4px 20px rgba(124, 58, 237, 0.4);
+}
+
+/* ダークモード */
+[data-theme="dark"] {
+  --base-primary: #1F2937;
+  --base-secondary: #111827;
+  --base-tertiary: #374151;
+  --base-border: #4B5563;
+  --base-text-primary: #F9FAFB;
+  --base-text-secondary: #D1D5DB;
+}
+
+/* グローバルスタイル */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans JP', sans-serif;
+  background-color: var(--base-secondary);
+  color: var(--base-text-primary);
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* スクロールバー（LINE風） */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--base-tertiary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--main-primary);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--main-dark);
+}
+
+/* フォーカス */
+*:focus {
+  outline: 2px solid var(--main-primary);
+  outline-offset: 2px;
+}
+
+/* 基本アニメーション */
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.slide-in-up {
+  animation: slideInUp 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+/* LINE風メッセージ送信アニメーション */
+@keyframes messageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 録音中パルスアニメーション */
+@keyframes pulse-recording {
+  0%, 100% { 
+    transform: scale(1); 
+    box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.7); 
+  }
+  50% { 
+    transform: scale(1.05); 
+    box-shadow: 0 0 0 10px rgba(236, 72, 153, 0); 
+  }
+}
+
+/* トロフィー風通知アニメーション */
+@keyframes trophy-slide {
+  0% { transform: translateX(100%); }
+  10% { transform: translateX(0); }
+  90% { transform: translateX(0); opacity: 1; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
+/* 文字起こしプログレスアニメーション */
+@keyframes gradient-loading {
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+
+/* ユーティリティクラス */
+.message-animation {
+  animation: messageSlideIn 0.3s ease-out;
+}
+
+.pulse-recording {
+  animation: pulse-recording 1.5s ease-in-out infinite;
+}
+
+.trophy-notification {
+  animation: trophy-slide 3s ease-in-out;
+}
+
+.gradient-loading {
+  background: linear-gradient(90deg, #F3F4F6, #C4B5FD, #F3F4F6);
+  background-size: 200px 100%;
+  animation: gradient-loading 1.5s ease-in-out infinite;
+}

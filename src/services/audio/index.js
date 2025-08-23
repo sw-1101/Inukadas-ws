@@ -1,0 +1,1 @@
+export { AudioRecorderService, getAudioRecorder, audioUtils } from './recorder';

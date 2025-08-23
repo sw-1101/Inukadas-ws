@@ -1,0 +1,129 @@
+/* AudioMessage コンポーネントスタイル - LINE風紫系UI */
+
+.container {
+  @apply w-full min-w-0;
+}
+
+/* 音声コントロールエリア */
+.audioControls {
+  @apply flex items-center gap-3 mb-3;
+}
+
+/* 再生ボタン */
+.playButton {
+  @apply w-10 h-10 flex items-center justify-center;
+  @apply bg-white bg-opacity-20 hover:bg-opacity-30 rounded-full;
+  @apply text-white border-0 cursor-pointer;
+  @apply transition-all duration-200 ease-out;
+  @apply focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50;
+}
+
+.playButton:disabled {
+  @apply opacity-60 cursor-not-allowed;
+}
+
+/* ローディングスピナー */
+.loadingSpinner {
+  @apply w-4 h-4 border-2 border-white border-t-transparent rounded-full;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 波形コンテナ */
+.waveformContainer {
+  @apply flex-1 relative h-8 bg-white bg-opacity-20 rounded-full overflow-hidden;
+}
+
+/* 波形表示 */
+.waveform {
+  @apply flex items-center justify-between h-full px-2 gap-1;
+}
+
+.waveformBar {
+  @apply w-1 bg-white rounded-full;
+  @apply transition-all duration-200 ease-out;
+  min-height: 2px;
+}
+
+/* プログレスオーバーレイ */
+.progressOverlay {
+  @apply absolute top-0 left-0 h-full bg-white bg-opacity-30 rounded-full;
+  @apply transition-all duration-300 ease-out;
+}
+
+/* 時間表示 */
+.timeDisplay {
+  @apply text-xs font-mono text-white text-opacity-90;
+  @apply whitespace-nowrap;
+  min-width: 70px;
+}
+
+/* 文字起こしエリア */
+.transcription {
+  @apply border-t border-white border-opacity-20 pt-3;
+}
+
+.transcriptionLabel {
+  @apply text-xs text-white text-opacity-70 mb-1;
+  @apply font-medium;
+}
+
+.transcriptionText {
+  @apply text-sm text-white leading-relaxed m-0;
+  @apply break-words;
+}
+
+/* モバイル対応 */
+@media (max-width: 640px) {
+  .audioControls {
+    @apply gap-2;
+  }
+  
+  .playButton {
+    @apply w-9 h-9;
+  }
+  
+  .timeDisplay {
+    @apply text-xs;
+    min-width: 65px;
+  }
+  
+  .transcriptionText {
+    @apply text-sm;
+  }
+}
+
+/* ダークモード対応（音声メッセージは基本的に自分のメッセージなので紫背景） */
+[data-theme="dark"] .playButton {
+  @apply bg-black bg-opacity-20 hover:bg-opacity-30;
+}
+
+[data-theme="dark"] .waveformContainer {
+  @apply bg-black bg-opacity-20;
+}
+
+[data-theme="dark"] .progressOverlay {
+  @apply bg-white bg-opacity-40;
+}
+
+[data-theme="dark"] .transcription {
+  @apply border-white border-opacity-10;
+}
+
+/* アクセシビリティ対応 */
+@media (prefers-reduced-motion: reduce) {
+  .waveformBar {
+    animation: none !important;
+  }
+  
+  .loadingSpinner {
+    animation: none !important;
+  }
+  
+  .progressOverlay {
+    transition: none !important;
+  }
+}

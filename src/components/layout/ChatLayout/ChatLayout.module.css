@@ -1,0 +1,170 @@
+/* ChatLayout コンポーネントスタイル - LINE風紫系UI */
+
+.layout {
+  @apply min-h-screen bg-gray-50 flex flex-col relative;
+}
+
+/* ヘッダーコンテナ */
+.headerContainer {
+  @apply flex-shrink-0 z-50;
+}
+
+/* メインコンテンツエリア */
+.content {
+  @apply flex-1 overflow-hidden;
+  /* ヘッダーの高さ分上部マージン */
+  margin-top: 64px;
+  /* 入力エリアの高さ分下部マージン */
+  margin-bottom: 80px;
+}
+
+.contentContainer {
+  @apply h-full overflow-y-auto;
+  @apply max-w-4xl mx-auto px-4;
+  
+  /* スムーズスクロール */
+  scroll-behavior: smooth;
+  
+  /* iOS Safari でのbounce無効化 */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* 入力エリアコンテナ */
+.inputContainer {
+  @apply fixed bottom-0 left-0 right-0 z-40;
+  @apply bg-white border-t border-gray-200;
+  @apply px-4 py-3;
+  
+  /* ぼかし背景 */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.95);
+  
+  /* 最小高さ */
+  min-height: 80px;
+  
+  /* 安全エリア対応 (iPhone X以降) */
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+}
+
+/* フローティングボタンコンテナ */
+.floatingButtonContainer {
+  @apply fixed z-30;
+  /* 入力エリアの上に配置 */
+  bottom: calc(80px + 16px + env(safe-area-inset-bottom));
+  right: 16px;
+}
+
+/* モバイル対応 */
+@media (max-width: 640px) {
+  .content {
+    /* モバイルヘッダー高さ */
+    margin-top: 56px;
+    /* モバイル入力エリア高さ */
+    margin-bottom: 80px;
+  }
+  
+  .contentContainer {
+    @apply px-3;
+  }
+  
+  .inputContainer {
+    @apply px-3 py-3;
+    min-height: 80px;
+  }
+  
+  .floatingButtonContainer {
+    bottom: calc(80px + 12px + env(safe-area-inset-bottom));
+    right: 12px;
+  }
+}
+
+/* タブレット対応 */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .contentContainer {
+    @apply px-6;
+  }
+  
+  .inputContainer {
+    @apply px-6;
+  }
+  
+  .floatingButtonContainer {
+    right: 20px;
+    bottom: calc(80px + 20px + env(safe-area-inset-bottom));
+  }
+}
+
+/* デスクトップ対応 */
+@media (min-width: 1025px) {
+  .layout {
+    /* デスクトップではコンテンツを中央に配置 */
+    max-width: none;
+  }
+  
+  .contentContainer {
+    @apply max-w-5xl;
+  }
+  
+  .inputContainer {
+    /* デスクトップではコンテナ幅に合わせる */
+    @apply max-w-5xl mx-auto left-1/2 right-auto;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 1200px;
+  }
+  
+  .floatingButtonContainer {
+    /* デスクトップではより控えめに */
+    right: calc((100vw - 1200px) / 2 + 20px);
+  }
+}
+
+/* スクロールバーのスタイリング */
+.contentContainer::-webkit-scrollbar {
+  width: 6px;
+}
+
+.contentContainer::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+.contentContainer::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded-full;
+}
+
+.contentContainer::-webkit-scrollbar-thumb:hover {
+  @apply bg-purple-400;
+}
+
+/* ダークモード対応 */
+[data-theme="dark"] .layout {
+  @apply bg-gray-900;
+}
+
+[data-theme="dark"] .inputContainer {
+  @apply bg-gray-800 border-gray-700;
+  background: rgba(31, 41, 55, 0.95);
+}
+
+[data-theme="dark"] .contentContainer::-webkit-scrollbar-thumb {
+  @apply bg-gray-600;
+}
+
+[data-theme="dark"] .contentContainer::-webkit-scrollbar-thumb:hover {
+  @apply bg-purple-400;
+}
+
+/* Reduced motion対応 */
+@media (prefers-reduced-motion: reduce) {
+  .content,
+  .inputContainer,
+  .floatingButtonContainer {
+    transition: none !important;
+  }
+  
+  .contentContainer {
+    scroll-behavior: auto;
+  }
+}

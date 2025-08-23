@@ -1,0 +1,282 @@
+name: 🤖 PR Automation
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  # プルリクエストラベル自動付与
+  pr-labeler:
+    name: 🏷️ Auto Label PR
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🏷️ Auto assign labels
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const { data: pr } = await github.rest.pulls.get({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            pull_number: context.issue.number,
+          });
+          
+          const title = pr.title.toLowerCase();
+          const body = pr.body ? pr.body.toLowerCase() : '';
+          const labels = [];
+          
+          // タイトルベースのラベル
+          if (title.includes('feat') || title.includes('feature')) {
+            labels.push('✨ feature');
+          }
+          if (title.includes('fix') || title.includes('bug')) {
+            labels.push('🐛 bug');
+          }
+          if (title.includes('docs') || title.includes('documentation')) {
+            labels.push('📚 documentation');
+          }
+          if (title.includes('refactor')) {
+            labels.push('♻️ refactoring');
+          }
+          if (title.includes('test')) {
+            labels.push('🧪 tests');
+          }
+          if (title.includes('style') || title.includes('design')) {
+            labels.push('🎨 design');
+          }
+          if (title.includes('chore') || title.includes('maintenance')) {
+            labels.push('🔧 maintenance');
+          }
+          
+          // 変更されたファイルベースのラベル
+          const { data: files } = await github.rest.pulls.listFiles({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            pull_number: context.issue.number,
+          });
+          
+          const fileTypes = files.map(file => file.filename);
+          
+          if (fileTypes.some(f => f.includes('.github/workflows'))) {
+            labels.push('⚙️ ci/cd');
+          }
+          if (fileTypes.some(f => f.includes('package.json'))) {
+            labels.push('📦 dependencies');
+          }
+          if (fileTypes.some(f => f.includes('.tsx') || f.includes('.ts'))) {
+            labels.push('⚛️ react');
+          }
+          if (fileTypes.some(f => f.includes('.css') || f.includes('.scss'))) {
+            labels.push('🎨 styling');
+          }
+          if (fileTypes.some(f => f.includes('firebase'))) {
+            labels.push('🔥 firebase');
+          }
+          
+          // PRサイズベースのラベル
+          const additions = pr.additions || 0;
+          const deletions = pr.deletions || 0;
+          const totalChanges = additions + deletions;
+          
+          if (totalChanges < 50) {
+            labels.push('📦 size/XS');
+          } else if (totalChanges < 200) {
+            labels.push('📦 size/S');
+          } else if (totalChanges < 500) {
+            labels.push('📦 size/M');
+          } else if (totalChanges < 1000) {
+            labels.push('📦 size/L');
+          } else {
+            labels.push('📦 size/XL');
+          }
+          
+          // ラベル付与
+          if (labels.length > 0) {
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: labels,
+            });
+          }
+
+  # プルリクエスト情報サマリー
+  pr-summary:
+    name: 📊 PR Summary
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.event.action == 'opened'
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: 📊 Generate PR summary
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const { data: pr } = await github.rest.pulls.get({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            pull_number: context.issue.number,
+          });
+          
+          const { data: files } = await github.rest.pulls.listFiles({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            pull_number: context.issue.number,
+          });
+          
+          // ファイル変更統計
+          const fileTypes = {
+            '⚛️ React Components': files.filter(f => f.filename.includes('.tsx') && f.filename.includes('components')).length,
+            '🔧 Hooks': files.filter(f => f.filename.includes('hooks/')).length,
+            '🎨 Styles': files.filter(f => f.filename.includes('.css') || f.filename.includes('.scss')).length,
+            '📚 Stories': files.filter(f => f.filename.includes('.stories.')).length,
+            '🎭 E2E Tests': files.filter(f => f.filename.includes('e2e/')).length,
+            '⚙️ Config': files.filter(f => f.filename.includes('config') || f.filename.includes('.json')).length,
+            '📖 Documentation': files.filter(f => f.filename.includes('.md')).length,
+            '🔄 CI/CD': files.filter(f => f.filename.includes('.github/')).length,
+          };
+          
+          const changedFiles = Object.entries(fileTypes)
+            .filter(([, count]) => count > 0)
+            .map(([type, count]) => `- ${type}: ${count} files`)
+            .join('\n');
+          
+          const summary = `## 📊 プルリクエストサマリー
+
+### 📈 変更統計
+- **追加行数**: +${pr.additions || 0}
+- **削除行数**: -${pr.deletions || 0}
+- **変更ファイル数**: ${pr.changed_files || 0}
+- **コミット数**: ${pr.commits || 0}
+
+### 📁 変更されたファイルタイプ
+${changedFiles || 'ファイル変更なし'}
+
+### 🔍 レビューポイント
+${pr.body && pr.body.includes('## ') ? 
+  '説明文に詳細な情報が記載されています。' : 
+  '⚠️ プルリクエストの説明を追加することをお勧めします。'}
+
+### ✅ 自動チェック
+以下のチェックが自動実行されます：
+- 🔍 TypeScript & ESLint
+- 🧪 Unit Tests
+- 📚 Storybook Build
+- 🎭 E2E Tests (Playwright)
+- 🔒 Security Scan
+
+---
+*このサマリーは自動生成されました 🤖*`;
+
+          await github.rest.issues.createComment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+            body: summary,
+          });
+
+  # レビュー承認後の自動アクション
+  post-approval:
+    name: 🎉 Post Approval Actions
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request_review' && github.event.review.state == 'approved'
+    
+    steps:
+    - name: 🎉 Approval celebration
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const { data: pr } = await github.rest.pulls.get({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            pull_number: context.payload.pull_request.number,
+          });
+          
+          // レビュー承認数確認
+          const { data: reviews } = await github.rest.pulls.listReviews({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            pull_number: context.payload.pull_request.number,
+          });
+          
+          const approvedReviews = reviews.filter(review => review.state === 'APPROVED');
+          const requiredApprovals = 1; // ブランチ保護設定と合わせる
+          
+          if (approvedReviews.length >= requiredApprovals) {
+            const celebrationComment = `## 🎉 レビュー承認完了！
+
+**✅ 必要な承認数に達しました (${approvedReviews.length}/${requiredApprovals})**
+
+### 🚀 次のステップ
+1. すべてのステータスチェックが ✅ になるまで待機
+2. 競合がないことを確認
+3. **Squash and merge** または **Create a merge commit** でマージ
+
+### 👥 承認者
+${approvedReviews.map(review => `- @${review.user.login}`).join('\n')}
+
+---
+🎊 お疲れさまでした！素晴らしいコードをありがとうございます！`;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: celebrationComment,
+            });
+          }
+
+  # プルリクエスト完了後のクリーンアップ
+  pr-cleanup:
+    name: 🧹 PR Cleanup
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+    
+    steps:
+    - name: 🧹 Post-merge cleanup
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const branchName = context.payload.pull_request.head.ref;
+          
+          // マージ完了メッセージ
+          const completionMessage = `## ✅ マージ完了
+
+**🎉 プルリクエスト #${context.payload.pull_request.number} が正常にマージされました！**
+
+### 📊 最終統計
+- **マージ先**: \`${context.payload.pull_request.base.ref}\`
+- **ソースブランチ**: \`${branchName}\`
+- **マージタイプ**: ${context.payload.pull_request.merged ? 'Merged' : 'Closed'}
+
+### 🚀 デプロイメント
+- 本番環境への自動デプロイが開始されます
+- デプロイ完了まで約5分程度お待ちください
+
+### 🧹 ブランチクリーンアップ
+\`${branchName}\` ブランチは手動で削除できます：
+
+\`\`\`bash
+git branch -d ${branchName}
+git push origin --delete ${branchName}
+\`\`\`
+
+---
+*変更が本番環境に反映されました！ 🚀*`;
+
+          await github.rest.issues.createComment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.payload.pull_request.number,
+            body: completionMessage,
+          });

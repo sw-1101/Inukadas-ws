@@ -1,0 +1,239 @@
+/* SearchBox スタイル - LINE風紫系UI */
+
+.container {
+  @apply relative;
+  width: 100%;
+}
+
+.containerFullWidth {
+  width: 100%;
+}
+
+.containerFixedWidth {
+  width: 320px;
+}
+
+/* 入力エリア */
+.inputContainer {
+  @apply relative;
+  display: flex;
+  align-items: center;
+}
+
+.input {
+  @apply w-full px-4 py-3 rounded-xl border transition-all duration-200;
+  background-color: var(--base-primary);
+  border-color: var(--base-border);
+  color: var(--base-text-primary);
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.input:focus {
+  @apply outline-none;
+  border-color: var(--main-primary);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+}
+
+.input::placeholder {
+  color: var(--base-text-secondary);
+}
+
+.inputWithIcon {
+  padding-left: 48px;
+}
+
+.inputWithAction {
+  padding-right: 48px;
+}
+
+/* アイコンエリア */
+.iconContainer {
+  @apply absolute left-3 top-1/2;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--base-text-secondary);
+}
+
+.actionContainer {
+  @apply absolute right-2 top-1/2;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ボタン */
+.iconButton {
+  @apply p-2 rounded-full transition-colors duration-200;
+  background: transparent;
+  border: none;
+  color: var(--base-text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.iconButton:hover {
+  background-color: var(--base-tertiary);
+}
+
+.iconButton:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.clearButton {
+  color: var(--base-text-secondary);
+}
+
+.filterButton {
+  color: var(--main-primary);
+}
+
+.filterButtonActive {
+  background-color: rgba(124, 58, 237, 0.1);
+}
+
+/* ローディング状態 */
+.loading {
+  @apply animate-spin;
+  color: var(--main-primary);
+}
+
+/* オートコンプリート */
+.autocompleteContainer {
+  @apply relative;
+}
+
+.dropdown {
+  @apply absolute w-full z-50 mt-1 rounded-xl border shadow-lg;
+  background-color: var(--base-primary);
+  border-color: var(--base-border);
+  max-height: 200px;
+  overflow-y: auto;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.dropdownItem {
+  @apply px-4 py-3 text-sm cursor-pointer transition-colors duration-150;
+  color: var(--base-text-primary);
+  border-bottom: 1px solid var(--base-border);
+}
+
+.dropdownItem:hover {
+  background-color: var(--base-tertiary);
+}
+
+.dropdownItem:last-child {
+  border-bottom: none;
+}
+
+.dropdownItemCategory {
+  @apply text-xs font-medium px-4 py-2;
+  background-color: var(--base-tertiary);
+  color: var(--base-text-secondary);
+  border-bottom: 1px solid var(--base-border);
+}
+
+.dropdownItemHighlighted {
+  background-color: var(--main-light);
+  background-opacity: 0.2;
+}
+
+/* フィルターチップエリア */
+.filtersContainer {
+  @apply mt-2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filterChip {
+  @apply px-3 py-1 text-xs rounded-full border transition-all duration-200;
+  background-color: rgba(124, 58, 237, 0.1);
+  color: var(--main-primary);
+  border-color: var(--main-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.filterChip:hover {
+  background-color: rgba(124, 58, 237, 0.15);
+  transform: translateY(-1px);
+}
+
+.filterChipRemove {
+  @apply ml-1 cursor-pointer;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* エラー状態 */
+.error {
+  border-color: var(--accent-error);
+}
+
+.error:focus {
+  border-color: var(--accent-error);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.errorMessage {
+  @apply text-xs mt-1;
+  color: var(--accent-error);
+}
+
+/* 成功状態 */
+.success {
+  border-color: var(--accent-success);
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 640px) {
+  .input {
+    @apply py-3 text-base;
+  }
+  
+  .iconButton {
+    @apply p-2;
+  }
+  
+  .dropdown {
+    max-height: 160px;
+  }
+  
+  .dropdownItem {
+    @apply py-3;
+  }
+  
+  .filtersContainer {
+    @apply mt-2;
+  }
+  
+  .filterChip {
+    @apply text-xs px-2 py-1;
+  }
+}
+
+/* アニメーション */
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(-8px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+/* フォーカス管理 */
+.input:focus + .iconContainer {
+  color: var(--main-primary);
+}

@@ -1,0 +1,30 @@
+{
+  "framework": "vite",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "installCommand": "npm ci",
+  "git": {
+    "deploymentEnabled": {
+      "main": true,
+      "develop": true
+    }
+  },
+  "env": {
+    "VITE_FIREBASE_API_KEY": "@vite-firebase-api-key",
+    "VITE_FIREBASE_AUTH_DOMAIN": "@vite-firebase-auth-domain",
+    "VITE_FIREBASE_PROJECT_ID": "@vite-firebase-project-id",
+    "VITE_FIREBASE_STORAGE_BUCKET": "@vite-firebase-storage-bucket", 
+    "VITE_FIREBASE_MESSAGING_SENDER_ID": "@vite-firebase-messaging-sender-id",
+    "VITE_FIREBASE_APP_ID": "@vite-firebase-app-id",
+    "VITE_GEMINI_API_KEY": "@vite-gemini-api-key"
+  },
+  "preview": {
+    "develop": {
+      "env": {
+        "VITE_FIREBASE_API_KEY": "@vite-firebase-api-key-dev",
+        "VITE_FIREBASE_AUTH_DOMAIN": "@vite-firebase-auth-domain-dev",
+        "VITE_FIREBASE_PROJECT_ID": "@vite-firebase-project-id-dev"
+      }
+    }
+  }
+}

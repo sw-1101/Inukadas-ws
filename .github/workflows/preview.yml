@@ -1,0 +1,96 @@
+name: 🔍 Preview Deployment
+
+on:
+  pull_request:
+    branches: [ main ]
+    types: [opened, synchronize, reopened]
+
+env:
+  NODE_VERSION: '20.x'
+
+jobs:
+  preview:
+    name: 🌐 Deploy Preview
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    
+    environment:
+      name: preview-pr-${{ github.event.number }}
+      url: ${{ steps.preview-deploy.outputs.details_url }}
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+    
+    - name: 📦 Install dependencies
+      run: npm ci
+    
+    - name: 🏗️ Build application
+      run: npm run build
+      env:
+        VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+        VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+        VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+        VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
+        VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+        VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+    
+    - name: 🌐 Deploy to Firebase Hosting Preview
+      id: preview-deploy
+      uses: FirebaseExtended/action-hosting-deploy@v0
+      with:
+        repoToken: '${{ secrets.GITHUB_TOKEN }}'
+        firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
+        projectId: '${{ secrets.FIREBASE_PROJECT_ID }}'
+        expires: 7d
+    
+    - name: 💬 Comment Preview URL
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const { data: comments } = await github.rest.issues.listComments({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+          });
+          
+          const botComment = comments.find(comment => 
+            comment.user.type === 'Bot' && 
+            comment.body.includes('プレビュー環境')
+          );
+          
+          const previewUrl = '${{ steps.preview-deploy.outputs.details_url }}';
+          const commentBody = `## 🌐 プレビュー環境デプロイ完了
+          
+**プレビューURL**: ${previewUrl}
+
+### 📋 確認項目
+- [ ] ログイン・ログアウト機能
+- [ ] データ作成・編集・削除
+- [ ] プロフィール更新
+- [ ] レスポンシブデザイン
+- [ ] パフォーマンス
+
+> このプレビューは7日後に自動削除されます`;
+
+          if (botComment) {
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: botComment.id,
+              body: commentBody,
+            });
+          } else {
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: commentBody,
+            });
+          }

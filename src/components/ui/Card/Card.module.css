@@ -1,0 +1,115 @@
+/* Card コンポーネントスタイル - LINE風紫系UI */
+
+.card {
+  @apply bg-base-primary border border-base-border rounded-xl;
+  @apply transition-all duration-200 ease-out;
+}
+
+/* バリアント - default */
+.default {
+  box-shadow: var(--shadow-card);
+}
+
+/* バリアント - elevated */
+.elevated {
+  box-shadow: var(--shadow-bubble);
+  @apply border-0;
+}
+
+/* バリアント - outlined */
+.outlined {
+  @apply border-2 border-main-light;
+  box-shadow: none;
+}
+
+/* パディング設定 */
+.padding-none {
+  @apply p-0;
+}
+
+.padding-sm {
+  @apply p-3;
+}
+
+.padding-md {
+  @apply p-4;
+}
+
+.padding-lg {
+  @apply p-6;
+}
+
+/* クリック可能な状態 */
+.clickable {
+  @apply cursor-pointer;
+}
+
+.clickable:hover {
+  @apply border-main-light;
+  box-shadow: var(--shadow-bubble);
+}
+
+/* ホバー効果 */
+.hover:hover {
+  @apply transform -translate-y-1;
+  box-shadow: var(--shadow-modal);
+}
+
+/* アクティブ状態 */
+.clickable:active {
+  @apply transform translate-y-0;
+  box-shadow: var(--shadow-card);
+}
+
+/* フォーカス表示（キーボードナビゲーション） */
+.clickable:focus-visible {
+  @apply outline-none ring-2 ring-main-primary ring-offset-2;
+}
+
+/* モバイル対応 */
+@media (max-width: 640px) {
+  .padding-sm {
+    @apply p-3;
+  }
+  
+  .padding-md {
+    @apply p-4;
+  }
+  
+  .padding-lg {
+    @apply p-5;
+  }
+  
+  /* タッチデバイスではホバー効果を無効化 */
+  @media (hover: none) and (pointer: coarse) {
+    .hover:hover {
+      @apply transform translate-y-0;
+      box-shadow: var(--shadow-card);
+    }
+    
+    .clickable:hover {
+      box-shadow: var(--shadow-card);
+    }
+  }
+}
+
+/* ダークモード対応 */
+[data-theme="dark"] .card {
+  @apply bg-gray-800 border-gray-700;
+}
+
+[data-theme="dark"] .default {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .elevated {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .outlined {
+  @apply border-main-light;
+}
+
+[data-theme="dark"] .clickable:hover {
+  @apply border-main-primary bg-gray-700;
+}

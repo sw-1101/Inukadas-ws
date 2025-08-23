@@ -1,0 +1,109 @@
+/* アプリケーション全体のレイアウトスタイル */
+
+/* CSS Reset - CssBaseline相当 */
+.globalReset {
+  /* Global reset styles */
+  box-sizing: border-box;
+}
+
+.globalReset *,
+.globalReset *:before,
+.globalReset *:after {
+  box-sizing: inherit;
+}
+
+.globalReset body {
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-size: 14px;
+  line-height: 1.43;
+  color: rgba(0, 0, 0, 0.87);
+  background-color: #fafafa;
+}
+
+/* メインコンテナ */
+.container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+/* テーマスタイル定数 */
+:root {
+  --primary-color: #1976d2;
+  --secondary-color: #dc004e;
+  --background-light: #fafafa;
+  --grey-100: #f5f5f5;
+  --text-primary: rgba(0, 0, 0, 0.87);
+  --text-secondary: rgba(0, 0, 0, 0.6);
+  
+  /* ブレークポイント */
+  --breakpoint-xs: 0px;
+  --breakpoint-sm: 600px;
+  --breakpoint-md: 900px;
+  --breakpoint-lg: 1200px;
+  --breakpoint-xl: 1536px;
+}
+
+/* タイポグラフィ - テーマ相当 */
+.h1 {
+  font-size: 2.5rem;
+  font-weight: 300;
+  line-height: 1.167;
+  letter-spacing: -0.01562em;
+}
+
+.h4 {
+  font-size: 2rem;
+  font-weight: 400;
+  line-height: 1.235;
+  letter-spacing: 0.00735em;
+}
+
+.h5 {
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1.334;
+  letter-spacing: 0em;
+}
+
+/* レスポンシブタイポグラフィ */
+@media (max-width: 600px) {
+  .h1 {
+    font-size: 2rem;
+  }
+  
+  .h4 {
+    font-size: 1.5rem;
+  }
+  
+  .h5 {
+    font-size: 1.25rem;
+  }
+}
+
+/* ユーティリティクラス */
+.flexCenter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flexColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.fullHeight {
+  height: 100%;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+/* アニメーション定義 */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

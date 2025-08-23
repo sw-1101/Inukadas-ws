@@ -1,0 +1,138 @@
+/* MessageBubble コンポーネントスタイル - LINE風紫系UI */
+
+.container {
+  @apply flex flex-col mb-3;
+  /* アニメーション時の位置を保持 */
+  transform-origin: center bottom;
+}
+
+.container.own {
+  @apply items-end;
+}
+
+.container.system {
+  @apply items-start;
+}
+
+/* メッセージバブル本体 */
+.bubble {
+  @apply max-w-[70%] px-4 py-3 break-words;
+  @apply font-normal leading-relaxed;
+  word-wrap: break-word;
+  word-break: break-word;
+  
+  /* LINE風の滑らかな角丸 */
+  border-radius: 18px;
+  
+  /* 適度なシャドウでポップ感を演出 */
+  box-shadow: var(--shadow-card);
+  
+  /* トランジション */
+  transition: all 0.2s ease-out;
+}
+
+/* 自分のメッセージ（右寄せ・紫グラデーション） */
+.bubble.own {
+  @apply text-white;
+  background: var(--main-gradient);
+  /* 右下の角を少し尖らせる（LINE風） */
+  border-bottom-right-radius: 4px;
+  box-shadow: var(--shadow-bubble);
+}
+
+.bubble.own:hover {
+  background: linear-gradient(135deg, #6366F1, #5B21B6);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-modal);
+}
+
+/* システムメッセージ（左寄せ・グレー） */
+.bubble.system {
+  @apply bg-base-tertiary text-base-text-primary;
+  /* 左下の角を少し尖らせる（LINE風） */
+  border-bottom-left-radius: 4px;
+}
+
+.bubble.system:hover {
+  @apply bg-base-primary;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-bubble);
+}
+
+/* タイムスタンプ */
+.timestamp {
+  @apply text-xs text-base-text-secondary mt-1 px-2;
+  @apply font-medium;
+}
+
+.container.own .timestamp {
+  @apply text-right;
+}
+
+.container.system .timestamp {
+  @apply text-left;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 640px) {
+  .bubble {
+    @apply max-w-[85%] px-3 py-3 text-sm;
+  }
+  
+  .timestamp {
+    @apply text-xs px-1;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .bubble {
+    @apply max-w-[75%];
+  }
+}
+
+@media (min-width: 1025px) {
+  .bubble {
+    @apply max-w-[60%];
+  }
+}
+
+/* ダークモード対応 */
+[data-theme="dark"] .bubble.system {
+  @apply bg-gray-700 text-gray-200;
+}
+
+[data-theme="dark"] .bubble.system:hover {
+  @apply bg-gray-600;
+}
+
+[data-theme="dark"] .timestamp {
+  @apply text-gray-400;
+}
+
+/* アクセシビリティ対応 */
+@media (prefers-reduced-motion: reduce) {
+  .bubble {
+    transition: none !important;
+  }
+}
+
+/* 長文対応 */
+.bubble {
+  /* 長い単語の改行を許可 */
+  overflow-wrap: break-word;
+  /* 連続する空白を保持しつつ改行を許可 */
+  white-space: pre-wrap;
+}
+
+/* 選択可能なテキスト */
+.bubble {
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+}
+
+/* フォーカス対応（アクセシビリティ） */
+.bubble:focus {
+  @apply outline-none ring-2 ring-main-primary ring-offset-2;
+}

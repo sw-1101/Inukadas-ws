@@ -1,0 +1,120 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  NODE_VERSION: '20.x'
+
+jobs:
+  # 静的解析とテスト
+  test:
+    name: 🧪 Test & Build
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🟢 Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    - name: 📦 Install dependencies
+      run: npm ci
+    
+    - name: 🔍 TypeScript check
+      run: npm run type-check
+    
+    - name: 🧹 ESLint check
+      run: npm run lint
+    
+    - name: 🧪 Run tests
+      run: npm run test
+      env:
+        CI: true
+    
+    - name: 🎭 Run E2E tests
+      run: npx playwright install --with-deps chromium && npm run test:e2e -- --project=chromium
+      env:
+        CI: true
+    
+    - name: 📚 Build Storybook
+      run: npm run build-storybook
+    
+    - name: 🏗️ Build application
+      run: npm run build
+      env:
+        VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+        VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
+        VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+        VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
+        VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
+        VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+    
+    - name: 📤 Upload build artifacts
+      uses: actions/upload-artifact@v4
+      if: matrix.node-version == '20.x'
+      with:
+        name: build-files
+        path: dist/
+        retention-days: 1
+
+  # develop環境デプロイ用の必須テスト
+  require-tests-for-develop:
+    name: 📝 Tests Required for Develop PR
+    if: github.event_name == 'pull_request' && github.base_ref == 'develop'
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: ✅ Tests passed for develop
+        run: echo "All tests passed! PR to develop can be approved."
+
+  # main環境デプロイ用の必須テスト  
+  require-tests-for-main:
+    name: 📝 Tests Required for Production PR
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: ✅ Tests passed for production
+        run: |
+          echo "All tests passed!"
+          echo "Ready for production deployment"
+
+  # セキュリティスキャン
+  security:
+    name: 🔒 Security Scan
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+    
+    - name: 🟢 Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+    
+    - name: 📦 Install dependencies
+      run: npm ci
+    
+    - name: 🔒 Run security audit
+      run: npm audit --audit-level high
+      continue-on-error: true
+    
+    - name: 🔍 Dependency vulnerability scan
+      uses: actions/dependency-review-action@v4
+      with:
+        fail-on-severity: high

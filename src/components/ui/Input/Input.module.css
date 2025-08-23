@@ -1,0 +1,116 @@
+/* Input コンポーネントスタイル - LINE風紫系UI */
+
+.container {
+  @apply w-full;
+}
+
+.input {
+  @apply w-full px-4 py-3 text-gray-900 bg-gray-100 border border-gray-300 rounded-xl;
+  @apply transition-all duration-200 ease-out;
+  @apply placeholder:text-gray-500;
+  @apply focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500;
+  
+  /* LINE風の滑らかな角丸 */
+  border-radius: 20px;
+  
+  /* iOS Safariでのzoom防止 */
+  font-size: 16px;
+}
+
+.input:hover:not(.disabled):not(:focus) {
+  @apply border-purple-300 bg-white;
+  box-shadow: 0 1px 3px rgba(124, 58, 237, 0.1);
+}
+
+.input:focus {
+  @apply bg-white;
+  border-color: rgb(124, 58, 237);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+}
+
+/* 自動拡張テキストエリア */
+.autoResize {
+  @apply min-h-[48px] max-h-48 overflow-y-auto;
+  line-height: 1.5;
+  resize: none;
+}
+
+/* エラー状態 */
+.error {
+  @apply border-red-500;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.error:focus {
+  @apply ring-red-500 border-red-500;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+/* 無効化状態 */
+.disabled {
+  @apply opacity-60 cursor-not-allowed bg-gray-200;
+  pointer-events: none;
+}
+
+/* エラーメッセージ */
+.errorMessage {
+  @apply text-sm text-red-500 mt-2 px-2;
+  font-weight: 500;
+}
+
+/* スクロールバーのスタイリング */
+.autoResize::-webkit-scrollbar {
+  width: 4px;
+}
+
+.autoResize::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+.autoResize::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded-full;
+}
+
+.autoResize::-webkit-scrollbar-thumb:hover {
+  @apply bg-purple-300;
+}
+
+/* モバイル対応 */
+@media (max-width: 640px) {
+  .input {
+    @apply min-h-[44px]; /* タッチターゲット最小サイズ */
+  }
+  
+  .autoResize {
+    @apply min-h-[44px];
+  }
+}
+
+/* ダークモード対応 */
+[data-theme="dark"] .input {
+  @apply bg-gray-700 border-gray-600 text-gray-200;
+}
+
+[data-theme="dark"] .input::placeholder {
+  @apply text-gray-400;
+}
+
+[data-theme="dark"] .input:hover:not(.disabled):not(:focus) {
+  @apply bg-gray-600 border-purple-300;
+}
+
+[data-theme="dark"] .input:focus {
+  @apply bg-gray-600;
+}
+
+[data-theme="dark"] .disabled {
+  @apply bg-gray-800;
+}
+
+[data-theme="dark"] .autoResize::-webkit-scrollbar-thumb {
+  @apply bg-gray-600;
+}
+
+[data-theme="dark"] .autoResize::-webkit-scrollbar-thumb:hover {
+  @apply bg-purple-300;
+}
