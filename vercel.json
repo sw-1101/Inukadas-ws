@@ -17,14 +17,5 @@
     "VITE_FIREBASE_MESSAGING_SENDER_ID": "@vite-firebase-messaging-sender-id",
     "VITE_FIREBASE_APP_ID": "@vite-firebase-app-id",
     "VITE_GEMINI_API_KEY": "@vite-gemini-api-key"
-  },
-  "preview": {
-    "develop": {
-      "env": {
-        "VITE_FIREBASE_API_KEY": "@vite-firebase-api-key-dev",
-        "VITE_FIREBASE_AUTH_DOMAIN": "@vite-firebase-auth-domain-dev",
-        "VITE_FIREBASE_PROJECT_ID": "@vite-firebase-project-id-dev"
-      }
-    }
   }
 }
