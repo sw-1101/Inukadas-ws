@@ -9,7 +9,7 @@ React + JavaScript + Firebase + Gemini API を利用したわたなべのお勉�
 [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 [![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=flat&logo=firebase&logoColor=black)](https://firebase.google.com/)
 
-![Inukadas Logo](https://raw.githubusercontent.com/sw-1101/Inukadas/main/src/assets/Inukadas-logo.svg)
+![Inukadas Logo](https://raw.githubusercontent.com/sw-1101/Inukadas-ws/main/src/assets/Inukadas-logo.svg?sanitize=true)
 
 ---
 
