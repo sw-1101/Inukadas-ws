@@ -12,20 +12,18 @@ if (!admin.apps.length) {
   });
 }
 
-// CORS設定
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-};
-
 /**
  * Vercel Serverless Function - Gemini APIプロキシ
  */
 module.exports = async function handler(req, res) {
+  // CORS設定
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
   // プリフライトリクエストの処理
   if (req.method === 'OPTIONS') {
-    res.status(200).json({});
+    res.status(200).end();
     return;
   }
 
@@ -62,7 +60,7 @@ module.exports = async function handler(req, res) {
     }
 
     // リクエストボディの取得
-    const { action, data } = await req.json();
+    const { action, data } = req.body;
 
     // Gemini API初期化
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
