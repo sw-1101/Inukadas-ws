@@ -1,7 +1,5 @@
-import { storage } from '../../config/firebase';
+import { storage, auth } from '../../config/firebase';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
-// AudioFormat型は削除されました（JavaScript変換時）
-import { GoogleGenerativeAI } from '@google/generative-ai';
 
 /**
  * 音声ファイル文字起こしサービス
@@ -158,45 +156,49 @@ class TranscriptionService {
         audioBlob = await response.blob();
       }
 
-      // Gemini API初期化
-      const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
-      const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
+      // Firebase認証トークンを取得
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error('ユーザーがログインしていません');
+      }
+      const idToken = await user.getIdToken();
 
       // 音声をBase64に変換
       const audioBase64 = await this.blobToBase64(audioBlob);
 
-      // プロンプト作成
-      const language = options.language === 'ja' ? '日本語' : options.language || '自動検出';
-      const prompt = `
-        この音声ファイルを文字起こししてください。
-        言語: ${language}
-        ${options.prompt ? `追加指示: ${options.prompt}` : ''}
-        
-        以下の形式で出力してください：
-        - 文字起こし結果のみを出力
-        - 句読点を適切に追加
-        - 改行は段落の切れ目のみ
-      `;
+      // Vercel Edge Functionのエンドポイント
+      const API_ENDPOINT = import.meta.env.PROD
+        ? '/api/gemini'
+        : 'http://localhost:3000/api/gemini';
 
-      // Gemini APIに送信
-      const result = await model.generateContent([
-        { text: prompt },
-        {
-          inlineData: {
+      // APIリクエスト
+      const requestBody = {
+        action: 'transcribe',
+        data: {
+          audioData: {
             mimeType: audioBlob.type || 'audio/webm',
             data: audioBase64
-          }
+          },
+          options: options
         }
-      ]);
-
-      const transcription = result.response.text();
-
-      // 結果を返す
-      return {
-        text: transcription,
-        language: options.language || 'ja',
-        confidence: 0.95 // Gemini APIは信頼度を返さないため、高い値を設定
       };
+
+      const response = await fetch(API_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${idToken}`
+        },
+        body: JSON.stringify(requestBody)
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || '文字起こしAPIリクエストが失敗しました');
+      }
+
+      const result = await response.json();
+      return result.result;
     } catch (error) {
       throw error;
     }

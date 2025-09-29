@@ -36,3 +36,4 @@ storybook-static
 /playwright-report/
 /playwright/.cache/
 test-debug.png
+.vercel
