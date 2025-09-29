@@ -1,5 +1,5 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import * as admin from 'firebase-admin';
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+const admin = require('firebase-admin');
 
 // Firebase Admin SDKの初期化（環境変数から）
 if (!admin.apps.length) {
@@ -22,34 +22,25 @@ const corsHeaders = {
 /**
  * Vercel Edge Function - Gemini APIプロキシ
  */
-export default async function handler(req) {
+module.exports = async function handler(req, res) {
   // プリフライトリクエストの処理
   if (req.method === 'OPTIONS') {
-    return new Response(null, { status: 200, headers: corsHeaders });
+    res.status(200).json({});
+    return;
   }
 
   // POSTメソッドのみ許可
   if (req.method !== 'POST') {
-    return new Response(
-      JSON.stringify({ error: 'Method not allowed' }),
-      {
-        status: 405,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      }
-    );
+    res.status(405).json({ error: 'Method not allowed' });
+    return;
   }
 
   try {
     // リクエストヘッダーから認証トークンを取得
     const authHeader = req.headers.get('authorization');
     if (!authHeader?.startsWith('Bearer ')) {
-      return new Response(
-        JSON.stringify({ error: '認証が必要です' }),
-        {
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
-      );
+      res.status(401).json({ error: '認証が必要です' });
+      return;
     }
 
     const idToken = authHeader.split('Bearer ')[1];
@@ -59,25 +50,15 @@ export default async function handler(req) {
       const decodedToken = await admin.auth().verifyIdToken(idToken);
       console.log('Authenticated user:', decodedToken.uid);
     } catch (authError) {
-      return new Response(
-        JSON.stringify({ error: '無効な認証トークン' }),
-        {
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
-      );
+      res.status(401).json({ error: '無効な認証トークン' });
+      return;
     }
 
     // Gemini APIキーの確認
     if (!process.env.GEMINI_API_KEY) {
       console.error('GEMINI_API_KEY is not configured');
-      return new Response(
-        JSON.stringify({ error: 'サーバー設定エラー：APIキーが設定されていません' }),
-        {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
-      );
+      res.status(500).json({ error: 'サーバー設定エラー：APIキーが設定されていません' });
+      return;
     }
 
     // リクエストボディの取得
@@ -103,35 +84,20 @@ export default async function handler(req) {
         break;
 
       default:
-        return new Response(
-          JSON.stringify({ error: '不明なアクション: ' + action }),
-          {
-            status: 400,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-          }
-        );
+        res.status(400).json({ error: '不明なアクション: ' + action });
+        return;
     }
 
-    return new Response(
-      JSON.stringify({ success: true, result }),
-      {
-        status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      }
-    );
+    res.status(200).json({ success: true, result });
+    return;
 
   } catch (error) {
     console.error('Error processing request:', error);
-    return new Response(
-      JSON.stringify({
-        error: 'サーバーエラー',
-        message: error.message
-      }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      }
-    );
+    res.status(500).json({
+      error: 'サーバーエラー',
+      message: error.message
+    });
+    return;
   }
 }
 
@@ -335,7 +301,4 @@ ${options.prompt ? `追加指示: ${options.prompt}` : ''}
   };
 }
 
-// Edge Runtimeの設定
-export const config = {
-  runtime: 'edge',
-};
+// Serverless Functionsを使用（Edge Runtimeを削除）
