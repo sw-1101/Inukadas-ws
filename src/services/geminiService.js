@@ -183,9 +183,10 @@ export async function searchContent(query, existingContent) {
   } catch (error) {
 
     // フォールバック検索
+    const safeQuery = query ? query.toLowerCase() : '';
     return existingContent.filter(content =>
-      (content.summary && content.summary.toLowerCase().includes(query.toLowerCase())) ||
-      (content.tags && content.tags.some(tag => tag && tag.toLowerCase().includes(query.toLowerCase())))
+      (content.summary && content.summary.toLowerCase().includes(safeQuery)) ||
+      (content.tags && content.tags.some(tag => tag && tag.toLowerCase().includes(safeQuery)))
     );
   }
 }
