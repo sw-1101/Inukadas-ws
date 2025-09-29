@@ -20,7 +20,7 @@ const corsHeaders = {
 };
 
 /**
- * Vercel Edge Function - Gemini APIプロキシ
+ * Vercel Serverless Function - Gemini APIプロキシ
  */
 module.exports = async function handler(req, res) {
   // プリフライトリクエストの処理
@@ -37,7 +37,7 @@ module.exports = async function handler(req, res) {
 
   try {
     // リクエストヘッダーから認証トークンを取得
-    const authHeader = req.headers.get('authorization');
+    const authHeader = req.headers.authorization;
     if (!authHeader?.startsWith('Bearer ')) {
       res.status(401).json({ error: '認証が必要です' });
       return;
@@ -93,13 +93,19 @@ module.exports = async function handler(req, res) {
 
   } catch (error) {
     console.error('Error processing request:', error);
+
+    if (error.code === 'auth/argument-error') {
+      res.status(401).json({ error: '無効な認証トークン' });
+      return;
+    }
+
     res.status(500).json({
       error: 'サーバーエラー',
       message: error.message
     });
     return;
   }
-}
+};
 
 /**
  * マルチモーダルコンテンツの処理
@@ -300,5 +306,3 @@ ${options.prompt ? `追加指示: ${options.prompt}` : ''}
     confidence: 0.95
   };
 }
-
-// Serverless Functionsを使用（Edge Runtimeを削除）
