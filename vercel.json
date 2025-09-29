@@ -10,7 +10,7 @@
     }
   },
   "functions": {
-    "api/gemini.cjs": {
+    "api/gemini.js": {
       "maxDuration": 30
     }
   },

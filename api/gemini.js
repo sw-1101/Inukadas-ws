@@ -1,5 +1,5 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
-const admin = require('firebase-admin');
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import admin from 'firebase-admin';
 
 // Firebase Admin SDKの初期化（環境変数から）
 if (!admin.apps.length) {
@@ -15,7 +15,7 @@ if (!admin.apps.length) {
 /**
  * Vercel Serverless Function - Gemini APIプロキシ
  */
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   // CORS設定
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
